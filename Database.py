@@ -1,13 +1,5 @@
-import pymongo
-import datetime
-import random
-import time
 
-
-
-#Setup creating DB and connecting to Mongo
-from mongoengine import *
-connect('ytla', host='localhost', port=27017)
+db = client.ytla
 
 
 #Insertion 
@@ -22,6 +14,7 @@ array_5 = [0]*8
 array_6 = [0]*8
 array_7 = [0]*8
 array_8 = [0]*8
+i = 0
 
 
 while 1:
@@ -43,22 +36,22 @@ while 1:
 		i+=1
 	
 	timenow = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.utcnow())
-	print(timenow)	
-
+	print(timenow)		
+	
 	data = {
 		'timestamp': timenow,
 		'float_1': float_1, 
 		'float_2': float_2,
 		'float_3': float_3,
 		'float_4': float_4,
-		'array_1': ''.join(array_1),
-		'array_2': ''.join(array_2),	
-		'array_3': ''.join(array_3),	
-		'array_4': ''.join(array_4),	
-		'array_5': ''.join(array_5),	
-		'array_6': ''.join(array_6),	
-		'array_7': ''.join(array_7),	
-		'array_8': ''.join(array_8)		
+		'array_1': ', '.join(str(e) for e in array_1),
+		'array_2': ', '.join(str(e) for e in array_2),	
+		'array_3': ', '.join(str(e) for e in array_3),	
+		'array_4': ', '.join(str(e) for e in array_4),	
+		'array_5': ', '.join(str(e) for e in array_5),	
+		'array_6': ', '.join(str(e) for e in array_6),	
+		'array_7': ', '.join(str(e) for e in array_7),	
+		'array_8': ', '.join(str(e) for e in array_8)		
 	}
 
 
@@ -66,9 +59,6 @@ while 1:
 
 
 	result = test_database.insert_one(data)
-	print(x)
-	x+=1
-        time.sleep(10)
+	time.sleep(10)
 	
-
 
