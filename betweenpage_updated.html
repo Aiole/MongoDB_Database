@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<form method="POST">
+	<input name="input_var">
+	<input name="start_time">
+	<input name="end_time">
+	<input type="submit">
+</form>
+
+<table>
+        <tr>
+                <th>Entries</th>
+        </tr>
+        {% for x in data_list %}
+                <tr>
+                        <td>{{ x }}</td>
+                </tr>
+        {% endfor %}
+</table>
