@@ -38,14 +38,15 @@ def between_search_f(input_var,start_time,end_time):
 	
 	#Checks for if the user wants all variables
 	all_vars = {'', ' ', 'all', 'All'}
-	if input_var in all_vars:
-		print('here')		
+	if input_var in all_vars:		
 		#Searches database
 		gteresult = test_database.find(gtequery)
 
 		#Prints all the results found
 		for x in gteresult:
-			print(x)
+			data_list.append(x)
+
+		return data_list
 
 	else:
 		variables = input_var.split()
@@ -54,11 +55,14 @@ def between_search_f(input_var,start_time,end_time):
 		gteresult = test_database.find(gtequery,variables)
 
 		#Prints all the results found
+		data_list = []
 		for x in gteresult:
-			print(x)
+			data_list.append(x)
+
+		return data_list
 
 
-def upto_search_f(input_var,start_time,end_time):
+def upto_search_f(input_var,start_time):
 
 	
 	#Sets the greater than or equal to parameter with regards to start time
@@ -67,8 +71,7 @@ def upto_search_f(input_var,start_time,end_time):
 	
 	#Checks for if the user wants all variables
 	all_vars = {'', ' ', 'all', 'All'}
-	if input_var in all_vars:
-		print('here')		
+	if input_var in all_vars:	
 		#Searches database
 		gteresult = test_database.find(gtequery)
 
