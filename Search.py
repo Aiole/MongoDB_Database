@@ -1,91 +1,52 @@
-import pymongo
+import os, flask
+from flask import Flask, render_template, request, redirect, url_for
+from Search import choose_search, between_search_f, upto_search_f
 
-#Setup creating DB and connecting to Mongo
-from pymongo import MongoClient
-client = MongoClient()
+app = flask.Flask(__name__)
 
-client = MongoClient('localhost', 27017)
+#Homepage Display
+@app.route("/")
+def home():
+	return render_template('homepage.html')
 
-db = client.ytla
-test_database = db.test_database
+#Redirect for between and upto search
+@app.route('/', methods=['POST'])
+def search():
+	search_method = request.form['search_method']
+	newurl = str(choose_search(search_method))
+	if 'Between' in newurl:
+		return flask.redirect('/Between')
+	if 'UpToPresent' in newurl:
+		return flask.redirect('/UpToPresent')  
 
+#Between Page Display
+@app.route('/Between')
+def between():
+	return render_template('betweenpage.html')
 
-#Retrieval
+#Grabs values from html form and runs between_search_f from Search.py
+@app.route('/Between', methods=['POST'])
+def between_f():
+	input_var = request.form['input_var']
+	start_time = request.form['start_time']
+	end_time = request.form['end_time']
+	data_list = between_search_f(input_var,start_time,end_time)
+	return render_template("betweenpage_updated.html", data_list=data_list)
 
+#Between Page Display
+@app.route('/UpToPresent')
+def upto():
+	return render_template('uptopage.html')
 
-#Choose desired search method
-
-
-def choose_search(search_method):
-
-	#Checks if the between method was entered
-	between_search = {'Between', 'between', 'bet'}
-	if search_method in between_search:
-		return 'Between'
-	 
-	#Checks if the upto method was entered
-	upto_search = {'upto', 'UpToPresent', 'uptopresent', 'UpTo', 'Upto'}
-	if search_method in upto_search:
-		return 'UpToPresent'
-
-
-
-def between_search_f(input_var,start_time,end_time):
-	
-	#Sets the greater than or equal to and less than or equal to parameters with regards to start 		and end time
-	gtequery = { "timestamp": { "$gte": start_time, "$lte": end_time } }	
-
-	
-	#Checks for if the user wants all variables
-	all_vars = {'', ' ', 'all', 'All'}
-	if input_var in all_vars:		
-		#Searches database
-		gteresult = test_database.find(gtequery)
-
-		#Prints all the results found
-		for x in gteresult:
-			data_list.append(x)
-
-		return data_list
-
-	else:
-		variables = input_var.split()
-
-		#Searches database with those parameters
-		gteresult = test_database.find(gtequery,variables)
-
-		#Prints all the results found
-		data_list = []
-		for x in gteresult:
-			data_list.append(x)
-
-		return data_list
+#Grabs values from html form and upto_search_f from Search.py
+@app.route('/UpToPresent', methods=['POST'])
+def upto_f():
+	input_var = request.form['input_var']
+	start_time = request.form['start_time']
+	data_list = upto_search_f(input_var,start_time)
+	return render_template("uptopage_updated.html", data_list=data_list)
 
 
-def upto_search_f(input_var,start_time):
-
-	
-	#Sets the greater than or equal to parameter with regards to start time
-	gtequery = { "timestamp": { "$gte": start_time } }	
-
-	
-	#Checks for if the user wants all variables
-	all_vars = {'', ' ', 'all', 'All'}
-	if input_var in all_vars:	
-		#Searches database
-		gteresult = test_database.find(gtequery)
-
-		#Prints all the results found
-		for x in gteresult:
-			print(x)
-
-	else:
-		variables = input_var.split()
-
-		#Searches database with those parameters
-		gteresult = test_database.find(gtequery,variables)
-
-		#Prints all the results found
-		for x in gteresult:
-			print(x)
-
+    
+if __name__ == "__main__":
+	app.run(debug=True)
