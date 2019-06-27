@@ -1,7 +1,43 @@
 <!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/betweenpage.css') }}">
+</head> 
+
+<body>
+
 <form method="POST">
-	<input name="input_var">
-	<input name="start_time">
-	<input name="end_time">
+
+	<section>
+	
+	<div style="float:left;margin-right:20px;">
+	<label for="input_var">Variables</label>
+	<input id="input_var" type="text" value="" name="input_var">
+	</div>	
+	
+	<div style="float:left; margin-right:20px;">
+	<label for="start_time">Start Date</label>
+	<input id="start_time" type="text" value="" name="start_time">
+	</div>
+	
+	<div style="float:left;">
+	<label for="end_time">End Date</label>
+	<input id="end_time" type="text" value="" name="end_time">
+	</div>
+
+	<br style="clear:both;" />
+
+	</section>
+	
+	<section>
+
 	<input type="submit">
+
+	</section>
+
 </form>
+</body>
+</html>
+
+
+
