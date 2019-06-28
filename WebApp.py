@@ -1,6 +1,6 @@
 import os, flask
 from flask import Flask, render_template, request, redirect, url_for
-from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f
+from Search import choose_search, choose_queries, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse
 from Graph import create_plot
 
 app = flask.Flask(__name__)
@@ -35,8 +35,8 @@ def between_f():
 	end_time = request.form['end_time']
 	data_time = between_time_f(start_time,end_time)
 	data_list = between_search_f(input_var,start_time,end_time)
-	bar = create_plot(data_list,data_time)
-	return render_template("betweenpage_updated.html", data_list=data_list, plot=bar)
+	graph = create_plot(input_var,data_list,data_time)
+	return render_template("betweenpage_updated.html", data_list=data_list, plot=graph)
 
 #Between Page Display
 @app.route('/UpToPresent')
@@ -49,9 +49,9 @@ def upto_f():
 	input_var = request.form['input_var']
 	start_time = request.form['start_time']
 	data_time = upto_time_f(start_time)
-	data_list = upto_search_f(input_var,start_time)
-	bar = create_plot(data_list,data_time)
-	return render_template("uptopage_updated.html", data_list=data_list, plot=bar)
+	flo_data, arr_data = upto_search_f(input_var,start_time)
+	graph = create_plot(input_var,flo_data,arr_data,data_time)
+	return render_template("uptopage_updated.html", plot=graph)
 
 	
     
