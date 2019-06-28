@@ -1,4 +1,5 @@
 import pymongo
+import numpy
 
 #Setup for connecting to MongoDB
 from pymongo import MongoClient
@@ -43,8 +44,8 @@ def between_search_f(input_var,start_time,end_time):
 	before_sep = ", '"
 	for x in gteresult:
 		x = str(x)
-		x = x.split(after_sep)[2]
-		x = x.split(before_sep)[0]
+		#x = x.split(after_sep)[2]
+		#x = x.split(before_sep)[0]
 		data_list.append(x)
 
 	return data_list
@@ -56,22 +57,36 @@ def upto_search_f(input_var,start_time):
 	
 	#Sets the greater than or equal to parameter with regards to start time
 	gtequery = { "timestamp": { "$gte": start_time } }	
-	data_list = []
 	
 	variables = choose_queries(input_var)	
-
+		
+	
 	#Searches database with those parameters
 	gteresult = test_database.find(gtequery,variables)
 
 	#Appends all the results found
 	after_sep = "': "
-	before_sep = "}"
-	for x in gteresult:
-		x = str(x)
-		x = x.split(after_sep)[2]
-		x = x.split(before_sep)[0]
-		#x = float(x)
-		data_list.append(x)
+	before_sep = ", '"
+	a = 0
+	w = gteresult.count()
+	h = len(variables)
+	data_list = [[0 for x in range(w)] for y in range(h)]
+	while a < h:
+		b = 0
+		s = 0
+		gteresult = test_database.find(gtequery,variables)
+		for s in gteresult:
+			s = str(s)
+			if a == h - 1:
+				before_sep = "}"				
+			else:
+				before_sep = ", '"
+
+			s = s.split(after_sep)[2+a]
+			s = s.split(before_sep)[0]
+			data_list[a][b] = s
+			b+=1
+		a+=1
 
 	return data_list
 
