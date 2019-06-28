@@ -63,9 +63,9 @@ def upto_search_f(input_var,start_time):
 	#Searches database with those parameters
 	result = test_database.find(query,variables)
 
-	data_list = query_type(input_var, result, variables, query)
+	flo_data, arr_data = query_type(input_var, result, variables, query)
 
-	return data_list
+	return flo_data, arr_data
 
 def upto_time_f(start_time):
 
@@ -127,11 +127,25 @@ def query_type(input_var,result,variables,query):
 	
 	data = []	
 	if 'array' in input_var:	
-		data = array_parse(result,variables,query)		
-	if 'float' in input_var:
-		data = float_parse(result,variables,query)  	
+		arr_data = array_parse(result,variables,query)
+		
+		'''if 'float' in input_var:
+			flo_data = float_parse(result,variables,query)
+			return flo_data, arr_data
+		else:
+			return arr_data
+		'''
+	else:
+		arr_data = None	
 	
-	return data
+	if 'float' in input_var:
+		flo_data = float_parse(result,variables,query)
+		'''return flo_data'''
+	else:
+		flo_data = None
+
+	return flo_data, arr_data
+	
 
 
 def float_parse(result,variables,query):
@@ -164,9 +178,38 @@ def float_parse(result,variables,query):
 
 
 
-def array_parse(result, variables):
+def array_parse(result, variables, query):
 	
-	return result 
+	#Appends all the results found
+	after_sep = "': "
+	before_sep = ", "
+	a = 0
+	w = result.count()
+	h = 8
+	data_list = [[0 for x in range(w)] for y in range(h)]
+	while a < 8:
+		b = 0
+		s = 0
+		result = test_database.find(query,variables)
+		for s in result:
+			s = str(s)
+			if a == 7:
+				before_sep = "}"				
+			else:
+				before_sep = ", "
+			if a == 0:
+				after_sep = "': "
+				s = s.split(after_sep)[2+a]
+			else:
+				after_sep = ", "
+				s = s.split(after_sep)[a+1]
+
+			s = s.split(before_sep)[0]
+			data_list[a][b] = s
+			b+=1
+		a+=1
+
+	return data_list
 
 	
 
