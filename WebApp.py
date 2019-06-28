@@ -1,6 +1,7 @@
 import os, flask
 from flask import Flask, render_template, request, redirect, url_for
-from Search import choose_search, between_search_f, upto_search_f
+from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f
+from Graph import create_plot
 
 app = flask.Flask(__name__)
 
@@ -24,14 +25,18 @@ def search():
 def between():
 	return render_template('betweenpage.html')
 
+
+
 #Grabs values from html form and runs between_search_f from Search.py
 @app.route('/Between', methods=['POST'])
 def between_f():
 	input_var = request.form['input_var']
 	start_time = request.form['start_time']
 	end_time = request.form['end_time']
+	data_time = between_time_f(start_time,end_time)
 	data_list = between_search_f(input_var,start_time,end_time)
-	return render_template("betweenpage_updated.html", data_list=data_list)
+	bar = create_plot(data_list,data_time)
+	return render_template("betweenpage_updated.html", data_list=data_list, plot=bar)
 
 #Between Page Display
 @app.route('/UpToPresent')
@@ -43,10 +48,12 @@ def upto():
 def upto_f():
 	input_var = request.form['input_var']
 	start_time = request.form['start_time']
+	data_time = upto_time_f(start_time)
 	data_list = upto_search_f(input_var,start_time)
-	return render_template("uptopage_updated.html", data_list=data_list)
+	bar = create_plot(data_list,data_time)
+	return render_template("uptopage_updated.html", data_list=data_list, plot=bar)
 
-
+	
     
 if __name__ == "__main__":
 	app.run(debug=True)
