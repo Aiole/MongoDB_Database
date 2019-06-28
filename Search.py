@@ -30,7 +30,7 @@ def choose_search(search_method):
 def between_search_f(input_var,start_time,end_time):
 	
 	#Sets the gte and lte parameters for start_time and end_time
-	gtequery = { "timestamp": { "$gte": start_time, "$lte": end_time } }	
+	gtequery = { "timestamp": { "$gte": start_time, "$lte": end_time  } }	
 	data_list = []
 	
 	variables = choose_queries(input_var)
@@ -39,7 +39,12 @@ def between_search_f(input_var,start_time,end_time):
 	gteresult = test_database.find(gtequery,variables)
 
 	#Appends all the results found
+	after_sep = "': "
+	before_sep = ", '"
 	for x in gteresult:
+		x = str(x)
+		x = x.split(after_sep)[2]
+		x = x.split(before_sep)[0]
 		data_list.append(x)
 
 	return data_list
@@ -59,10 +64,57 @@ def upto_search_f(input_var,start_time):
 	gteresult = test_database.find(gtequery,variables)
 
 	#Appends all the results found
+	after_sep = "': "
+	before_sep = "}"
 	for x in gteresult:
+		x = str(x)
+		x = x.split(after_sep)[2]
+		x = x.split(before_sep)[0]
+		#x = float(x)
 		data_list.append(x)
 
 	return data_list
+
+def upto_time_f(start_time):
+
+	#Sets the greater than or equal to parameter with regards to start time
+	gtequery = { "timestamp": { "$gte": start_time } }	
+	data_time = []
+		
+	#Searches database with those parameters
+	gteresult = test_database.find(gtequery,{'timestamp':1})
+
+	#Appends all the results found
+	after_sep = "': '"
+	before_sep = "'}"
+	for x in gteresult:
+		x = str(x)
+		x = x.split(after_sep, 1)[1]
+		x = x.split(before_sep, 1)[0]
+		data_time.append(x)
+
+	return data_time
+
+def between_time_f(start_time,end_time):
+
+	#Sets the greater than or equal to parameter with regards to start time
+	gtequery = { "timestamp": { "$gte": start_time, "$lte": end_time  } }
+	data_time = []
+		
+
+	#Searches database with those parameters
+	gteresult = test_database.find(gtequery,{'timestamp':1})
+
+	#Appends all the results found
+	after_sep = "': '"
+	before_sep = "'}"
+	for x in gteresult:
+		x = str(x)
+		x = x.split(after_sep, 1)[1]
+		x = x.split(before_sep, 1)[0]
+		data_time.append(x)
+
+	return data_time
 
 
 #Alters input_var to be the desired parsable query
@@ -76,7 +128,6 @@ def choose_queries(input_var):
 	#Returns the variables the user wants along with a timestamp
 	else:
 		variables = input_var.split()
-		variables.append('timestamp')
 		return variables
 
 
