@@ -11,34 +11,35 @@ from Search import choose_queries
 
 def create_plot(input_var,data_list,data_time):
 
-	
-	x0 = np.asarray(data_time)
-	y0 = data_list[0]
-	df0 = pd.DataFrame({'x0': x0, 'y0': y0})
-
-	x1 = np.asarray(data_time)
-	y1 = data_list[1]
-	df1 = pd.DataFrame({'x1': x1, 'y1': y1})  
-
-	data = [
-		go.Scatter(
-		x=df0['x0'], 
-		y=df0['y0'],
+	variables = len(choose_queries(input_var))
+	x = np.asarray(data_time)
+	a = 0
+	data = []
+	while a < variables:
+		y = data_list[a]
+		df = pd.DataFrame({'x': x, 'y': y})
+		data.append(go.Scatter(
+		x = df['x'],
+		y = df['y'],
 		mode = 'lines',
-    		name = 'lines'
-		),
+    		name = 'float_' + str(a+1)				
+		))
+		a+=1
+	
+	
+	'''variables = len(choose_queries(input_var))
+	x = np.asarray(data_time)
 
-		go.Scatter(
-		x=df1['x1'], 
-		y=df1['y1'],
-		mode = 'lines',
-    		name = 'lines'
-		)
-	]
-	
-	choose_queries(input_var)
-	
-	
+	a = 0
+	y = data_list[a]
+	df = pd.DataFrame({'x': x, 'y': y})
+	data = [go.Scatter(
+	x = df['x'],
+	y = df['y'],
+	mode = 'lines',
+    	name = 'float_' + str(a+1)				
+	)]'''
+
 
 	graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -47,6 +48,5 @@ def create_plot(input_var,data_list,data_time):
 
 
 	
-
 
 
