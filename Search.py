@@ -39,16 +39,11 @@ def between_search_f(input_var,start_time,end_time):
 	#Searches database with those parameters
 	result = test_database.find(query,variables)
 
-	#Appends all the results found
-	after_sep = "': "
-	before_sep = ", '"
-	for x in result:
-		x = str(x)
-		#x = x.split(after_sep)[2]
-		#x = x.split(before_sep)[0]
-		data_list.append(x)
+	flo_data, arr_data = query_type(input_var, result, variables, query)
 
-	return data_list
+		
+
+	return flo_data, arr_data
 
 
 #Creates a list of every data point from a start date to present
@@ -197,9 +192,10 @@ def array_parse(result, variables, query):
 				before_sep = "}"				
 			else:
 				before_sep = ", "
+
 			if a == 0:
 				after_sep = "': "
-				s = s.split(after_sep)[2+a]
+				s = s.split(after_sep)[2]
 			else:
 				after_sep = ", "
 				s = s.split(after_sep)[a+1]
@@ -212,6 +208,11 @@ def array_parse(result, variables, query):
 	return data_list
 
 	
-
+def var_name(input_var,x):
+	variables = input_var.split()
+	return str(variables[x])
+	
+		
+	
 
 
