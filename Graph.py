@@ -4,51 +4,14 @@ import plotly.graph_objs as go
 import pandas as pd
 import numpy as np
 import json
+import csv
 from Search import choose_queries, var_name
 
 
 #~~~Graph~~~
 
-def create_plot(input_var,flo_data,arr_data,data_time):
+def create_plot(data):
 
-	data = []
-
-	if 'float' in input_var:
-
-		variables = len(choose_queries(input_var))
-
-		if 'array' in input_var:
-			variables = variables - 1
-				
-		x = np.asarray(data_time)
-		a = 0
-		while a < variables:
-			y = flo_data[a]
-			df = pd.DataFrame({'x': x, 'y': y})
-			data.append(go.Scatter(
-			x = df['x'],
-			y = df['y'],
-			mode = 'lines',
-	    		name = var_name(input_var,a)				
-			))
-			a+=1
-	
-	
-	if 'array' in input_var:
-		variables = len(choose_queries(input_var))
-		x = np.asarray(data_time)
-		a = 0 
-		while a < 8:
-			y = arr_data[a]
-			df = pd.DataFrame({'x': x, 'y': y})
-			data.append(go.Scatter(
-			x = df['x'],
-			y = df['y'],
-			mode = 'lines',
-		    	name = 'array[' + str(a) + ']'				
-			))
-			a+=1
-	
 
 	layout = go.Layout(
 		autosize=False,
