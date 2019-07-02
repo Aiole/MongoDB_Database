@@ -211,9 +211,20 @@ def var_name(input_var,x):
 		
 def csv_write(variables,query):
 
-	results = get_results(variables,query)
-	data_csv = '\n'.join(map(str, results))
 	data_log = open('DataLog.csv', 'w')
+	data_csv = []
+	results = get_results(variables,query)
+	data = '\n'.join(map(str, results))
+	count = results.count()
+	a = 1
+	data_c = data.split("'),")
+	while a < count:
+		data_cs = data_c[a].split('}')[0]
+		data_csv.append(data_cs)
+		a+=1
+	
+
+	data_csv = '\n'.join(map(str, data_csv))
 
 	with data_log:
 		writer = csv.writer(data_log)
