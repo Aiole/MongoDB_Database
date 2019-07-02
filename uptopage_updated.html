@@ -6,7 +6,7 @@
 
 <body>
 
-<form method="POST">
+<form method="post" action="">
 
 	<section>
 	
@@ -26,11 +26,14 @@
 	
 	<section>
 
-	<input type="submit">
+	<input type="submit" value="Graph" name="action">
 
+	<input type="submit" value="Log" name="action">
+	
 	</section>
 
 </form>
+
 
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -43,7 +46,7 @@
     </script>
 </div>
 
-<table>
+<!-- <table>
         <tr>
                 <th>Entries</th>
         </tr>
@@ -53,6 +56,7 @@
                 </tr>
         {% endfor %}
 </table>
+-->
 
 </body>
 </html>
