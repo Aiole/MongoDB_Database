@@ -31,14 +31,39 @@ def between():
 #Grabs values from html form and runs between_search_f from Search.py
 @app.route('/Between', methods=['POST'])
 def between_f():
-	input_var = request.form['input_var']
-	start_time = request.form['start_time']
-	end_time = request.form['end_time']
-	data_time = between_time_f(start_time,end_time)
-	flo_data, arr_data = between_search_f(input_var,start_time,end_time)
-	data = create_df(input_var,flo_data,arr_data,data_time)
-	graph = create_plot(data)
-	return render_template("betweenpage_updated.html", plot=graph)
+
+	if request.method == 'POST':
+
+		if request.form['action'] == 'Graph': 
+			input_var = request.form['input_var']
+			start_time = request.form['start_time']
+			end_time = request.form['end_time']
+			variables = choose_queries(input_var)
+			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }	
+	
+			data_time = between_time_f(start_time,end_time)
+			flo_data, arr_data = between_search_f(input_var,start_time,end_time)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data)
+
+			return render_template("betweenpage_updated.html", plot=graph)
+
+		elif request.form['action'] == 'Log': 
+			input_var = request.form['input_var']
+			start_time = request.form['start_time']
+			end_time = request.form['end_time']
+			variables = choose_queries(input_var)
+			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }
+	
+			csv_write(variables,query)
+
+			return render_template('betweenpage.html')
+
+		else:
+			return render_template('betweenpage.html')
+
+	else:
+		return render_template('betweenpage.html')
 
 #Between Page Display
 @app.route('/UpToPresent')
