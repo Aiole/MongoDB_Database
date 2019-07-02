@@ -45,22 +45,73 @@ def between_f():
 def upto():
 	return render_template('uptopage.html')
 
+
 #Grabs values from html form and upto_search_f from Search.py
-@app.route('/UpToPresent', methods=['POST'])
-def upto_f():
-	input_var = request.form['input_var']
-	start_time = request.form['start_time']
-	variables = choose_queries(input_var)
-	query = { "timestamp": { "$gte": start_time } }	
+@app.route('/UpToPresent', methods=['Get','POST'])
+def upto_graph():
 
-	data_time = upto_time_f(start_time)
-	flo_data, arr_data = upto_search_f(input_var,start_time)
-	data = create_df(input_var,flo_data,arr_data,data_time)
-	graph = create_plot(data)
-	csv_write(variables,query)
 
-	return render_template("uptopage_updated.html", plot=graph)
+	'''
+	elif request.method == 'GET':
 
+		if request.form['action'] == 'Graph': 
+			input_var = request.form.get['input_var1']
+			start_time = request.form['start_time']
+			variables = choose_queries(input_var)
+			query = { "timestamp": { "$gte": start_time } }	
+	
+			data_time = upto_time_f(start_time)
+			flo_data, arr_data = upto_search_f(input_var,start_time)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data)
+
+			return render_template("uptopage_updated.html", plot=graph)
+
+		elif request.form['action'] == 'Log': 
+
+			input_var = request.form['input_var']
+			start_time = request.form['start_time']
+			variables = choose_queries(input_var)
+			query = { "timestamp": { "$gte": start_time } }	
+	
+			csv_write(variables,query)
+
+			return render_template('uptopage.html')
+
+		else:
+			return render_template('uptopage.html')
+	'''	
+	
+	if request.method == 'POST':
+
+		if request.form['action'] == 'Graph': 
+			input_var = request.form['input_var']
+			start_time = request.form['start_time']
+			variables = choose_queries(input_var)
+			query = { "timestamp": { "$gte": start_time } }	
+	
+			data_time = upto_time_f(start_time)
+			flo_data, arr_data = upto_search_f(input_var,start_time)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data)
+
+			return render_template("uptopage_updated.html", plot=graph)
+
+		elif request.form['action'] == 'Log': 
+			input_var = request.form['input_var']
+			start_time = request.form['start_time']
+			variables = choose_queries(input_var)
+			query = { "timestamp": { "$gte": start_time } }	
+	
+			csv_write(variables,query)
+
+			return render_template('uptopage.html')
+
+		else:
+			return render_template('uptopage.html')
+
+	else:
+		return render_template('uptopage.html')
 	
     
 if __name__ == "__main__":
