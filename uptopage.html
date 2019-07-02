@@ -6,7 +6,7 @@
 
 <body>
 
-<form method="POST">
+<form method="post" action="">
 
 	<section>
 	
@@ -20,19 +20,27 @@
 	<input id="start_time" type="text" value="" name="start_time">
 	</div>
 
+	<input type="checkbox" name="input_var1" value="float_1">float_1<br>
+  	<input type="checkbox" name="input_var1" value="array_1">array_1<br>
+	
 	<br style="clear:both;" />
 
 	</section>
 	
 	<section>
 
-	<input type="submit">
+	<input type="submit" value="Graph" name="action">
+
+	<input type="submit" value="Log" name="action">
 
 	</section>
 	
 
 
 </form>
+
+
+
 
 </body>
 </html>
