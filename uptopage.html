@@ -6,28 +6,47 @@
 
 <body>
 
+
+<form method="post" action="/UpToPresent">
+
+	<div class="dropdown">
+  	<button class="dropbtn">Variables</button>
+  	<div class="dropdown-content">
+	<a href="/UpToPresent/float_1">float_1</a>
+	<a href="/UpToPresent/float2">float_2</a>
+	<a href="/UpToPresent?input_var=float_3">float_3</a>
+	<a href="/UpToPresent?input_var=float_4">float_4</a>
+	<a href="/UpToPresent?input_var=array_1">array_1</a>
+	<a href="/UpToPresent?input_var=array_2">array_2</a>
+	<a href="/UpToPresent?input_var=array_3">array_3</a>
+	<a href="/UpToPresent?input_var=array_4">array_4</a>
+	<a href="/UpToPresent?input_var=array_5">array_5</a>
+	<a href="/UpToPresent?input_var=array_6">array_6</a>
+	<a href="/UpToPresent?input_var=array_7">array_7</a>
+	<a href="/UpToPresent?input_var=array_8">array_8</a>	
+	
+  	</div>
+
+
+</form>
+
 <form method="post" action="">
 
 	<section>
-	
-	<div style="float:left;margin-right:20px;">
-	<label for="input_var">Variables</label>
-	<input id="input_var" type="text" value="" name="input_var">
-	</div>	
-	
+
 	<div style="float:left;">
 	<label for="start_time">From this Date to the Present</label>
 	<input id="start_time" type="text" value="" name="start_time">
 	</div>
 
-	<input type="checkbox" name="input_var1" value="float_1">float_1<br>
-  	<input type="checkbox" name="input_var1" value="array_1">array_1<br>
+
+</div> 
 	
 	<br style="clear:both;" />
 
 	</section>
 	
-	<section>
+	<section id="buttons">
 
 	<input type="submit" value="Graph" name="action">
 
@@ -38,6 +57,8 @@
 
 
 </form>
+
+
 
 
 
