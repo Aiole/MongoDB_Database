@@ -48,13 +48,10 @@ def between_search_f(input_var,start_time,end_time):
 
 
 #Creates a list of every data point from a start date to present
-def upto_search_f(input_var,start_time):
-
+def upto_search_f(input_var,variables,start_time):
 	
 	#Sets the greater than or equal to parameter with regards to start time
-	query = { "timestamp": { "$gte": start_time } }	
-	
-	variables = choose_queries(input_var)			
+	query = { "timestamp": { "$gte": start_time } }				
 	
 
 	flo_data, arr_data = query_type(input_var, variables, query)
@@ -107,7 +104,7 @@ def between_time_f(start_time,end_time):
 def choose_queries(input_var):
 	
 	#Checks for if the use wants all variables
-	all_vars = {'', ' ', 'all', 'All'}
+	all_vars = {'all', 'All'}
 	if input_var in all_vars:
 		return None
 
@@ -235,13 +232,13 @@ def csv_write(variables,query):
 def create_df(input_var,flo_data,arr_data,data_time):
 
 	data = []
-
+	variables = len(choose_queries(input_var))
+	
 	if 'float' in input_var:
 
-		variables = len(choose_queries(input_var))
 
 		if 'array' in input_var:
-			variables = variables - 1
+			variables_len = variables_len - 1
 				
 		x = np.asarray(data_time)
 		a = 0
@@ -258,7 +255,6 @@ def create_df(input_var,flo_data,arr_data,data_time):
 	
 	
 	if 'array' in input_var:
-		variables = len(choose_queries(input_var))
 		x = np.asarray(data_time)
 		a = 0 
 		while a < 8:
@@ -276,5 +272,24 @@ def create_df(input_var,flo_data,arr_data,data_time):
 
 def get_results(variables,query):
 	return test_database.find(query,variables)
+
+
+def var_guess(input_var):
+
+	all_vars = ['float_1', 'float_2', 'float_3', 'float_4', 'array_1', 'array_2', 'array_3', 'array_4', 'array_5', 'array_6', 'array_7', 'array_8']
+
+	if input_var in all_vars:
+		return input_var
+
+	float_vars = ['float_1', 'float_2', 'float_3', 'float_4']
+	if input_var.startswith('f'):
+		return float_vars
+	
+	array_vars = ['array_1', 'array_2', 'array_3', 'array_4', 'array_5', 'array_6', 'array_7', 'array_8']
+	if input_var.startswith('a'):
+		return float_vars
+	
+	return
+
 
 
