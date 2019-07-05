@@ -7,6 +7,7 @@
 <body>
 
 
+
 <form method="post" action="/UpToPresent">
 
 	<div class="dropdown">
@@ -48,20 +49,17 @@
 
 </form>
 
-<div id="big_block">
 
-<form method="post" action="">
+	<div id="big_block">
+
+	<form method="post" action="">
 
 	<section>
-
-	<div id="input_time"style="float:left;">
+	<div id="input_time" style="float:left;">
 	<input id="start_time" type="text" value="" name="start_time">
 	<label for="start_time">From this Date to the Present</label>	
 	</div>
 
-
-</div> 
-	
 	<br style="clear:both;" />
 
 	</section>
@@ -71,17 +69,37 @@
 	<input type="submit" value="Graph" name="action">
 
 	<input type="submit" value="Log" name="action">
-
-	</section>
 	
-
+	</section>
 
 </form>
 
+</div>
 
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+<div class="chart" id="bargraph">
+    <script>
+        var graphs = {{plot | safe}};
+        Plotly.plot('bargraph',graphs,{});
+    </script>
 </div>
 
 
 
+<!-- <table>
+        <tr>
+                <th>Entries</th>
+        </tr>
+        {% for x in data_list %}
+                <tr>
+                        <td>{{ x }}</td>
+                </tr>
+        {% endfor %}
+</table>
+-->
+
 </body>
 </html>
+
