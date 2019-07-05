@@ -4,6 +4,7 @@ import plotly
 import plotly.graph_objs as go
 import pandas as pd
 import csv
+import logging
 
 #Setup for connecting to MongoDB
 from pymongo import MongoClient
@@ -38,9 +39,8 @@ def between_search_f(input_var,start_time,end_time):
 	query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }	
 	data_list = []
 	
-	variables = choose_queries(input_var)
 
-	flo_data, arr_data = query_type(input_var,variables, query)
+	flo_data, arr_data = query_type(input_var, query)
 
 		
 
@@ -48,13 +48,13 @@ def between_search_f(input_var,start_time,end_time):
 
 
 #Creates a list of every data point from a start date to present
-def upto_search_f(input_var,variables,start_time):
+def upto_search_f(input_var,start_time):
 	
 	#Sets the greater than or equal to parameter with regards to start time
 	query = { "timestamp": { "$gte": start_time } }				
 	
-
-	flo_data, arr_data = query_type(input_var, variables, query)
+	
+	flo_data, arr_data = query_type(input_var, query)
 
 	return flo_data, arr_data
 
@@ -100,88 +100,103 @@ def between_time_f(start_time,end_time):
 	return data_time
 
 
-#Alters input_var to be the desired parsable query
-def choose_queries(input_var):
-	
-	#Checks for if the use wants all variables
-	all_vars = {'all', 'All'}
-	if input_var in all_vars:
-		return None
 
-	#Returns the variables the user wants along with a timestamp
+def query_type(input_var,query):
+	
+	
+	if 'sel1X' or 'sel2X' or 'hybrid_selX' or 'intswX' or 'acc_lenX' or 'intLenX' or 'sel1Y' or 'sel2Y' or 'hybrid_selY' or 'int_swY' or 'acc_lenY' or 'intLenY' or 'lfI_X' or 'lfQ_X' or 'lfI_Y' or 'lfQ_Y' or 'iflo_x' or 'iflo_y' in input_var:	
+		arr_data = array_parse(input_var,query)
 	else:
-		variables = input_var.split()
-		return variables
-
-
-def query_type(input_var,variables,query):
-	
-	data = []
-	
-	if 'array' in input_var:	
-		arr_data = array_parse(variables,query)
-		
-	else:
-		arr_data = None	
+		arr_data = 'arr'	
 	
 	if 'float' in input_var:
-		flo_data = float_parse(variables,query)
+		flo_data = float_parse(input_var,query)
 	
 	else:
-		flo_data = None
+		flo_data = 'flo'
 
 	return flo_data, arr_data
 	
 
 
-def float_parse(variables,query):
+def float_parse(input_var,query):
 
 	#Appends all the results found
-	result = get_results(variables,query)
+	result = get_results(query,input_var)
 	after_sep = "': "
 	before_sep = ", '"
 	a = 0
 	w = result.count()
-	h = len(variables)
-	data_list = [[0 for x in range(w)] for y in range(h)]
-	while a < h:
-		b = 0
-		s = 0
-		result = get_results(variables,query)
-		for s in result:
-			s = str(s)
-			if a == h - 1:
-				before_sep = "}"				
-			else:
-				before_sep = ", '"
+	data_list = []
+	
+	b = 0
+	s = 0
+	result = get_results(query,input_var)
+	for s in result:
+		s = str(s)
+		if a == h - 1:
+			before_sep = "}"				
+		else:
+			before_sep = ", '"
 
-			s = s.split(after_sep)[2+a]
-			s = s.split(before_sep)[0]
-			data_list[a][b] = s
-			b+=1
-		a+=1
+		s = s.split(after_sep)[2]
+		s = s.split(before_sep)[0]
+		data_list.append(s)
+
 
 	return data_list
 
 
 
-def array_parse(variables, query):
+def array_parse(input_var, query):
+	#Appends all the results found
+	result = get_results(query,input_var)
+	a = 0
+	w = result.count()
+	h = 8
+	after_sep = "': '"
+	list_sep = ", "
+	before_sep = "'}"
+	#data_list = [[0 for x in range(w)] for y in range(h)]
+	data_list = np.zeros(shape=(w,h))
+	b = 0
+	for s in result:
+		s = str(s)
+		array_index = 0
+		if input_var in s:
+
+			s1 = s.split(after_sep)[1]
+			s1 = s1.split(before_sep,1)[0]
+			s2 = s1.split(list_sep)
+
+			while array_index < h:
+				data_list[b][array_index] = s2[array_index]
+				array_index+=1
+		#else:
+			#np.delete(data_list, b, 0)
+
+		b+=1
+
+	return data_list
+
+
+def array_parse_14(input_var, query):
 	
 	#Appends all the results found
-	result = get_results(variables,query)
+	result = get_results(query,input_var)
 	after_sep = "': "
 	before_sep = ", "
 	a = 0
 	w = result.count()
-	h = 8
+	h = 14
 	data_list = [[0 for x in range(w)] for y in range(h)]
-	while a < 8:
+	while a < h:
 		b = 0
 		s = 0
-		result = get_results(variables,query)
+		result = get_results(query,input_var)
 		for s in result:
 			s = str(s)
-			if a == 7:
+			if a == h - 1:
 				before_sep = "}"				
 			else:
 				before_sep = ", "
@@ -197,20 +212,16 @@ def array_parse(variables, query):
 			data_list[a][b] = s
 			b+=1
 		a+=1
-
+	
 	return data_list
 
 	
-def var_name(input_var,x):
-	variables = input_var.split()
-	return str(variables[x])
-	
 		
-def csv_write(variables,query):
+def csv_write(input_var,query):
 
 	data_log = open('DataLog.csv', 'w')
 	data_csv = []
-	results = get_results(variables,query)
+	results = get_results(query,input_var)
 	data = '\n'.join(map(str, results))
 	count = results.count()
 	a = 1
@@ -232,32 +243,40 @@ def csv_write(variables,query):
 def create_df(input_var,flo_data,arr_data,data_time):
 
 	data = []
-	variables = len(choose_queries(input_var))
 	
 	if 'float' in input_var:
-
-
-		if 'array' in input_var:
-			variables_len = variables_len - 1
-				
+					
 		x = np.asarray(data_time)
 		a = 0
-		while a < variables:
-			y = flo_data[a]
+		y = flo_data[a]
+		df = pd.DataFrame({'x': x, 'y': y})
+		data.append(go.Scatter(
+		x = df['x'],
+		y = df['y'],
+		mode = 'lines',
+	    	name = str(input_var)				
+			))
+
+	
+	if 'sel1X' or 'sel2X' or 'hybrid_selX' or 'intswX' or 'acc_lenX' or 'intLenX' or 'sel1Y' or 'sel2Y' or 'hybrid_selY' or 'int_swY' or 'acc_lenY' or 'intLenY' or 'lfI_X' or 'lfQ_X' or 'lfI_Y' or 'lfQ_Y' or 'iflo_x' or 'iflo_y' in input_var:
+		x = np.asarray(data_time)
+		array_index = 0 
+		while array_index < 8:
+			y = arr_data[:,array_index]
 			df = pd.DataFrame({'x': x, 'y': y})
 			data.append(go.Scatter(
 			x = df['x'],
 			y = df['y'],
 			mode = 'lines',
-	    		name = var_name(input_var,a)				
+		    	name = 'array[' + str(array_index) + ']'				
 			))
-			a+=1
-	
-	
-	if 'array' in input_var:
+			array_index+=1
+
+
+	'''if 'lf_Y' or 'lf_X' in input_var:
 		x = np.asarray(data_time)
 		a = 0 
-		while a < 8:
+		while a < 14:
 			y = arr_data[a]
 			df = pd.DataFrame({'x': x, 'y': y})
 			data.append(go.Scatter(
@@ -267,11 +286,12 @@ def create_df(input_var,flo_data,arr_data,data_time):
 		    	name = 'array[' + str(a) + ']'				
 			))
 			a+=1
+	'''	
 
 	return data
 
-def get_results(variables,query):
-	return test_database.find(query,variables)
+def get_results(query,input_var):
+	return test_database.find(query,{str(input_var):1})
 
 
 def var_guess(input_var):
