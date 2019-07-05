@@ -8,42 +8,63 @@
 
 
 
-	<form method="post" action="/UpToPresent">
+<form method="post" action="/UpToPresent">
 
 	<div class="dropdown">
-  	<button class="dropbtn">Variables</button>
+  	<button class="dropbtn">Single Values</button>
   	<div class="dropdown-content">
-	<a href="?input_var=float_3">float_1</a>
-	<a href="/UpToPresent?input_var=float_2">float_2</a>
-	<a href="/UpToPresent?input_var=float_3">float_3</a>
-	<a href="/UpToPresent?input_var=float_4">float_4</a>
-	<a href="/UpToPresent?input_var=array_1">array_1</a>
-	<a href="/UpToPresent?input_var=array_2">array_2</a>
-	<a href="/UpToPresent?input_var=array_3">array_3</a>
-	<a href="/UpToPresent?input_var=array_4">array_4</a>
-	<a href="/UpToPresent?input_var=array_5">array_5</a>
-	<a href="/UpToPresent?input_var=array_6">array_6</a>
-	<a href="/UpToPresent?input_var=array_7">array_7</a>
-	<a href="/UpToPresent?input_var=array_8">array_8</a>	
+	<a href="/UpToPresent/nt_state">nt_state</a>
+	<a href="/UpToPresent/nt_select">nt_select</a>
+	<a href="/UpToPresent/lo_freq">lo_freq</a>
+	<a href="/UpToPresent/lo_power">lo_power</a>	
+  	</div>
+
+
+</form>
+
+<form method="post" action="/UpToPresent">
+
+	<div class="dropdown">
+  	<button class="dropbtn">Arrays</button>
+  	<div class="dropdown-content">
+	<a href="/UpToPresent/sel1X">sel1X</a>
+	<a href="/UpToPresent/sel2X">sel2X</a>
+	<a href="/UpToPresent/hybrid_selX">hybrid_selX</a>
+	<a href="/UpToPresent/intswX">intswX</a>
+	<a href="/UpToPresent/acc_lenX">acc_lenX</a>
+	<a href="/UpToPresent/intLenX">intLenX</a>
+	<a href="/UpToPresent/sel1Y">sel1Y</a>
+	<a href="/UpToPresent/sel2Y">sel2Y</a>
+	<a href="/UpToPresent/hybrid_selY">hybrid_selY</a>
+	<a href="/UpToPresent/intswY">intswY</a>
+	<a href="/UpToPresent/acc_lenY">acc_lenY</a>
+	<a href="/UpToPresent/intLenY">intLenY</a>
+	<a href="/UpToPresent/lfI_X">lfI_X</a>
+	<a href="/UpToPresent/lfQ_X">lfQ_X</a>
+	<a href="/UpToPresent/iflo_x">iflo_x</a>
+	<a href="/UpToPresent/iflo_y">iflo_y</a>	
 	
   	</div>
 
 
-	</form>
+</form>
+
+
+	<div id="big_block">
 
 	<form method="post" action="">
 
 	<section>
-	<div style="float:left;">
-	<label for="start_time">From this Date to the Present</label>
+	<div id="input_time" style="float:left;">
 	<input id="start_time" type="text" value="" name="start_time">
+	<label for="start_time">From this Date to the Present</label>	
 	</div>
 
 	<br style="clear:both;" />
 
 	</section>
 	
-	<section>
+	<section id="buttons">
 
 	<input type="submit" value="Graph" name="action">
 
@@ -53,7 +74,7 @@
 
 </form>
 
-
+</div>
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
@@ -64,6 +85,8 @@
         Plotly.plot('bargraph',graphs,{});
     </script>
 </div>
+
+
 
 <!-- <table>
         <tr>
