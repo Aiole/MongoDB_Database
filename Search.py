@@ -12,8 +12,8 @@ client = MongoClient()
 
 client = MongoClient('localhost', 27017)
 
-db = client.ytla
-test_database = db.test_database
+db = client.ytla #for Ranjani's version change to client.ytla_new
+test_database = db.test_database #for Ranjani's version change to db.ytla_archives
 
 
 #~~~Data Search Retrieval~~~
@@ -155,7 +155,7 @@ def array_parse(input_var, query):
 	w = result.count()
 	h = 8
 	after_sep = "': '"
-	list_sep = ", "
+	list_sep = ", " #for Ranjani's version change to ","
 	before_sep = "'}"
 	#data_list = [[0 for x in range(w)] for y in range(h)]
 	data_list = np.zeros(shape=(w,h))
