@@ -16,7 +16,7 @@ db = client.ytla #for Ranjani's version change to client.ytla_new
 test_database = db.test_database #for Ranjani's version change to db.ytla_archives
 
 
-#~~~Data Search Retrieval~~~
+#~~~Backend Functions~~~
 
 
 #Chooses desired search method
@@ -58,6 +58,7 @@ def upto_search_f(input_var,start_time):
 
 	return flo_data, arr_data
 
+#Creates a list of timestamps from start_time to present
 def upto_time_f(start_time):
 
 	#Sets the greater than or equal to parameter with regards to start time
@@ -75,6 +76,7 @@ def upto_time_f(start_time):
 		x = x.split(after_sep, 1)[1]
 		x = x.split(before_sep, 1)[0]
 		data_time.append(x)
+
 
 	return data_time
 
@@ -103,17 +105,25 @@ def between_time_f(start_time,end_time):
 
 def query_type(input_var,query):
 	
-	
-	if 'sel1X' or 'sel2X' or 'hybrid_selX' or 'intswX' or 'acc_lenX' or 'intLenX' or 'sel1Y' or 'sel2Y' or 'hybrid_selY' or 'int_swY' or 'acc_lenY' or 'intLenY' or 'lfI_X' or 'lfQ_X' or 'lfI_Y' or 'lfQ_Y' or 'iflo_x' or 'iflo_y' in input_var:	
-		arr_data = array_parse(input_var,query)
-	else:
-		arr_data = 'arr'	
-	
-	if 'float' in input_var:
+	input_var = str(input_var)
+
+	arr_names = [ 'sel1X','sel2X','hybrid_selX','intswX','acc_lenX','intLenX','sel1Y','sel2Y','hybrid_selY','int_swY','acc_lenY','intLenY','lfI_X','lfQ_X','lfI_Y','lfQ_Y','iflo_x','iflo_y']
+
+	flo_names = ['nt_state','nt_select','lo_freq','lo_power']
+
+	if input_var in flo_names:
 		flo_data = float_parse(input_var,query)
 	
 	else:
-		flo_data = 'flo'
+		flo_data = []
+
+	input_var = str(input_var)
+
+	if input_var in arr_names:
+		arr_data = array_parse(input_var,query)
+		
+	else:
+		arr_data = []	
 
 	return flo_data, arr_data
 	
@@ -124,27 +134,25 @@ def float_parse(input_var,query):
 	#Appends all the results found
 	result = get_results(query,input_var)
 	after_sep = "': "
-	before_sep = ", '"
-	a = 0
-	w = result.count()
+	before_sep = '}'
 	data_list = []
-	
-	b = 0
 	s = 0
-	result = get_results(query,input_var)
 	for s in result:
 		s = str(s)
-		if a == h - 1:
-			before_sep = "}"				
-		else:
-			before_sep = ", '"
+		#print(s)
 
-		s = s.split(after_sep)[2]
-		s = s.split(before_sep)[0]
-		data_list.append(s)
+		if input_var in s:
+			s = s.split(after_sep)[2]
+			s = s.split(before_sep)[0]
+			data_list.append(s)
+		else:
+			data_list.append('NA')
 
 
 	return data_list
+
+
+
 
 
 
@@ -162,6 +170,7 @@ def array_parse(input_var, query):
 	b = 0
 	for s in result:
 		s = str(s)
+		#print(s)
 		array_index = 0
 		if input_var in s:
 
@@ -172,48 +181,15 @@ def array_parse(input_var, query):
 			while array_index < h:
 				data_list[b][array_index] = s2[array_index]
 				array_index+=1
-		#else:
-			#np.delete(data_list, b, 0)
+		
+		else:
+			data_list[b] = np.NaN
+	
 
 		b+=1
 
 	return data_list
 
-
-def array_parse_14(input_var, query):
-	
-	#Appends all the results found
-	result = get_results(query,input_var)
-	after_sep = "': "
-	before_sep = ", "
-	a = 0
-	w = result.count()
-	h = 14
-	data_list = [[0 for x in range(w)] for y in range(h)]
-	while a < h:
-		b = 0
-		s = 0
-		result = get_results(query,input_var)
-		for s in result:
-			s = str(s)
-			if a == h - 1:
-				before_sep = "}"				
-			else:
-				before_sep = ", "
-
-			if a == 0:
-				after_sep = "': "
-				s = s.split(after_sep)[2]
-			else:
-				after_sep = ", "
-				s = s.split(after_sep)[a+1]
-
-			s = s.split(before_sep)[0]
-			data_list[a][b] = s
-			b+=1
-		a+=1
-	
-	return data_list
 
 	
 		
@@ -243,12 +219,17 @@ def csv_write(input_var,query):
 def create_df(input_var,flo_data,arr_data,data_time):
 
 	data = []
+	input_var = str(input_var)
+	arr_names = ['sel1X','sel2X','hybrid_selX','intswX','acc_lenX','intLenX','sel1Y','sel2Y','hybrid_selY','int_swY','acc_lenY','intLenY','lfI_X','lfQ_X','lfI_Y','lfQ_Y','iflo_x','iflo_y']
+
+	flo_names = ['nt_state','nt_select','lo_freq','lo_power']
+
+	print(arr_data)
 	
-	if 'float' in input_var:
+	if input_var in flo_names:
 					
 		x = np.asarray(data_time)
-		a = 0
-		y = flo_data[a]
+		y = np.asarray(flo_data)
 		df = pd.DataFrame({'x': x, 'y': y})
 		data.append(go.Scatter(
 		x = df['x'],
@@ -258,8 +239,9 @@ def create_df(input_var,flo_data,arr_data,data_time):
 			))
 
 	
-	if 'sel1X' or 'sel2X' or 'hybrid_selX' or 'intswX' or 'acc_lenX' or 'intLenX' or 'sel1Y' or 'sel2Y' or 'hybrid_selY' or 'int_swY' or 'acc_lenY' or 'intLenY' or 'lfI_X' or 'lfQ_X' or 'lfI_Y' or 'lfQ_Y' or 'iflo_x' or 'iflo_y' in input_var:
+	if input_var in arr_names:
 		x = np.asarray(data_time)
+		y = np.asarray(flo_data)
 		array_index = 0 
 		while array_index < 8:
 			y = arr_data[:,array_index]
@@ -273,20 +255,6 @@ def create_df(input_var,flo_data,arr_data,data_time):
 			array_index+=1
 
 
-	'''if 'lf_Y' or 'lf_X' in input_var:
-		x = np.asarray(data_time)
-		a = 0 
-		while a < 14:
-			y = arr_data[a]
-			df = pd.DataFrame({'x': x, 'y': y})
-			data.append(go.Scatter(
-			x = df['x'],
-			y = df['y'],
-			mode = 'lines',
-		    	name = 'array[' + str(a) + ']'				
-			))
-			a+=1
-	'''	
 
 	return data
 
