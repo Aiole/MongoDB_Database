@@ -5,6 +5,9 @@ import plotly.graph_objs as go
 import pandas as pd
 import csv
 import logging
+import datetime
+import time
+import datetime
 
 #Setup for connecting to MongoDB
 from pymongo import MongoClient
@@ -19,6 +22,17 @@ test_database = db.test_database #for Ranjani's version change to db.ytla_archiv
 #~~~Backend Functions~~~
 
 
+
+def flo_names():
+
+	return ['nt_state','nt_select','lo_freq','lo_power']
+
+
+def arr_names():
+	
+	return ['sel1X','sel2X','hybrid_selX','intswX','acc_lenX','intLenX','sel1Y','sel2Y','hybrid_selY','intswY','acc_lenY','intLenY','lfI_X','lfQ_X','lfI_Y','lfQ_Y','iflo_x','iflo_y']
+	
+
 #Chooses desired search method
 def choose_search(search_method):
 
@@ -32,14 +46,12 @@ def choose_search(search_method):
 	if search_method in upto_search:
 		return 'UpToPresent'
 
-#Creates a list of every data point from a start_time to an end_time
-def between_search_f(input_var,start_time,end_time):
+#Returns 2 arrays of data one is empty one will contain the parsed data of the given input_var
+def between_search_f(input_var,query):
 	
-	#Sets the gte and lte parameters for start_time and end_time
-	query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }	
 	data_list = []
 	
-
+	#Only one will have data in it depending on the input_var
 	flo_data, arr_data = query_type(input_var, query)
 
 		
@@ -47,22 +59,18 @@ def between_search_f(input_var,start_time,end_time):
 	return flo_data, arr_data
 
 
-#Creates a list of every data point from a start date to present
-def upto_search_f(input_var,start_time):
+#Returns 2 arrays of data one is empty one will contain the parsed data of the given input_var
+def upto_search_f(input_var,query):		
 	
-	#Sets the greater than or equal to parameter with regards to start time
-	query = { "timestamp": { "$gte": start_time } }				
-	
-	
+	#Only one will have data in it depending on the input_var
 	flo_data, arr_data = query_type(input_var, query)
 
 	return flo_data, arr_data
+
 
 #Creates a list of timestamps from start_time to present
-def upto_time_f(start_time):
+def upto_time_f(query):
 
-	#Sets the greater than or equal to parameter with regards to start time
-	query = { "timestamp": { "$gte": start_time } }	
 	data_time = []
 		
 	#Searches database with those parameters
@@ -80,10 +88,9 @@ def upto_time_f(start_time):
 
 	return data_time
 
-def between_time_f(start_time,end_time):
+#Creates a list of timestamps from start_time to end_time
+def between_time_f(query):
 
-	#Sets the greater than or equal to parameter with regards to start time
-	query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }
 	data_time = []
 		
 
@@ -102,16 +109,18 @@ def between_time_f(start_time,end_time):
 	return data_time
 
 
-
+#Checks the input_var to determine which parsing function to call
 def query_type(input_var,query):
-	
+	arr_vars = 0
+	flo_vars = 0
 	input_var = str(input_var)
 
-	arr_names = [ 'sel1X','sel2X','hybrid_selX','intswX','acc_lenX','intLenX','sel1Y','sel2Y','hybrid_selY','int_swY','acc_lenY','intLenY','lfI_X','lfQ_X','lfI_Y','lfQ_Y','iflo_x','iflo_y']
+	arr_vars = arr_names()
 
-	flo_names = ['nt_state','nt_select','lo_freq','lo_power']
+	flo_vars = flo_names()
 
-	if input_var in flo_names:
+	#Calls float_parse if it is in the flo_names
+	if input_var in flo_vars:
 		flo_data = float_parse(input_var,query)
 	
 	else:
@@ -119,7 +128,8 @@ def query_type(input_var,query):
 
 	input_var = str(input_var)
 
-	if input_var in arr_names:
+	#Calls array_parse if it is in the arr_names
+	if input_var in arr_vars:
 		arr_data = array_parse(input_var,query)
 		
 	else:
@@ -128,7 +138,7 @@ def query_type(input_var,query):
 	return flo_data, arr_data
 	
 
-
+#Parses the float variables into one list of floats
 def float_parse(input_var,query):
 
 	#Appends all the results found
@@ -138,13 +148,15 @@ def float_parse(input_var,query):
 	data_list = []
 	s = 0
 	for s in result:
-		s = str(s)
-		#print(s)
 
+		s = str(s)
+		#checks to see if there is data for the variable at a given timestamp
 		if input_var in s:
 			s = s.split(after_sep)[2]
 			s = s.split(before_sep)[0]
 			data_list.append(s)
+
+		#If there is a gap in the data appends NA
 		else:
 			data_list.append('NA')
 
@@ -155,34 +167,41 @@ def float_parse(input_var,query):
 
 
 
-
+#Parses raw data from the database into a 2d array of floats
 def array_parse(input_var, query):
-	#Appends all the results found
+
+	#Queries the database
 	result = get_results(query,input_var)
 	a = 0
 	w = result.count()
 	h = 8
+
 	after_sep = "': '"
 	list_sep = ", " #for Ranjani's version change to ","
 	before_sep = "'}"
-	#data_list = [[0 for x in range(w)] for y in range(h)]
+
+	#Creates a 2d array
 	data_list = np.zeros(shape=(w,h))
 	b = 0
+
+	#Iterates through the timestamps
 	for s in result:
 		s = str(s)
-		#print(s)
 		array_index = 0
 		if input_var in s:
 
+			#Splits the string up into 8 values
 			s1 = s.split(after_sep)[1]
 			s1 = s1.split(before_sep,1)[0]
 			s2 = s1.split(list_sep)
 
+			#Loops through to get all 8 values in the 2d array
 			while array_index < h:
 				data_list[b][array_index] = s2[array_index]
 				array_index+=1
 		
 		else:
+			#If the data is missing for a timestamp set all 8 values to NA
 			data_list[b] = np.NaN
 	
 
@@ -192,9 +211,10 @@ def array_parse(input_var, query):
 
 
 	
-		
+#Creates a csv file called DataLog and puts the raw data within the query onto it 		
 def csv_write(input_var,query):
 
+	#Parses the data by creating new lines so it isnt one long mess
 	data_log = open('DataLog.csv', 'w')
 	data_csv = []
 	results = get_results(query,input_var)
@@ -202,6 +222,7 @@ def csv_write(input_var,query):
 	count = results.count()
 	a = 1
 	data_c = data.split("'),")
+	#removes unnecessary data like the id
 	while a < count:
 		data_cs = data_c[a].split('}')[0]
 		data_csv.append(data_cs)
@@ -209,24 +230,25 @@ def csv_write(input_var,query):
 	
 
 	data_csv = '\n'.join(map(str, data_csv))
-
+	#Opens and pastes the array into the document
 	with data_log:
 		writer = csv.writer(data_log)
 		writer.writerows([data_csv.split('","')])
 
 
-
+#A function that prepares the data to be graphed by putting it in a plotly friendly data frame
 def create_df(input_var,flo_data,arr_data,data_time):
-
+	arr_vars = 0
+	flo_vars = 0
 	data = []
 	input_var = str(input_var)
-	arr_names = ['sel1X','sel2X','hybrid_selX','intswX','acc_lenX','intLenX','sel1Y','sel2Y','hybrid_selY','int_swY','acc_lenY','intLenY','lfI_X','lfQ_X','lfI_Y','lfQ_Y','iflo_x','iflo_y']
 
-	flo_names = ['nt_state','nt_select','lo_freq','lo_power']
+	arr_vars = arr_names()
 
-	print(arr_data)
-	
-	if input_var in flo_names:
+	flo_vars = flo_names()
+
+	#Puts the float data into a data frame to get it ready for graphing	
+	if input_var in flo_vars:
 					
 		x = np.asarray(data_time)
 		y = np.asarray(flo_data)
@@ -238,8 +260,8 @@ def create_df(input_var,flo_data,arr_data,data_time):
 	    	name = str(input_var)				
 			))
 
-	
-	if input_var in arr_names:
+	#Puts the array data into a data frame to get it ready for graphing
+	if input_var in arr_vars:
 		x = np.asarray(data_time)
 		y = np.asarray(flo_data)
 		array_index = 0 
@@ -250,7 +272,7 @@ def create_df(input_var,flo_data,arr_data,data_time):
 			x = df['x'],
 			y = df['y'],
 			mode = 'lines',
-		    	name = 'array[' + str(array_index) + ']'				
+		    	name = input_var + '[' + str(array_index) + ']'				
 			))
 			array_index+=1
 
@@ -258,10 +280,11 @@ def create_df(input_var,flo_data,arr_data,data_time):
 
 	return data
 
+#This function is useless
 def get_results(query,input_var):
 	return test_database.find(query,{str(input_var):1})
 
-
+#delete
 def var_guess(input_var):
 
 	all_vars = ['float_1', 'float_2', 'float_3', 'float_4', 'array_1', 'array_2', 'array_3', 'array_4', 'array_5', 'array_6', 'array_7', 'array_8']
@@ -278,6 +301,16 @@ def var_guess(input_var):
 		return float_vars
 	
 	return
+
+#delete
+def convert_time(start_time):
+
+	
+	print(start_time)
+	# string to timedelta
+	t = datetime.datetime.strptime(start_time,":%Y-%m-%d %H:%M:%S")
+	td2 = datetime.timedelta(years=t.year, months=t.month, days=t.day, hours=t.hour, minutes=t.minute, seconds=t.second)
+	return td2
 
 
 
