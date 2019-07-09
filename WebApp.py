@@ -1,6 +1,6 @@
 import os, flask
 from flask import Flask, render_template, request, redirect, url_for
-from Search import choose_search, choose_queries, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, var_guess
+from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, var_guess
 from Graph import create_plot
 import csv
 
@@ -38,7 +38,6 @@ def between_f():
 			input_var = request.form['input_var']
 			start_time = request.form['start_time']
 			end_time = request.form['end_time']
-			variables = choose_queries(input_var)
 			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }	
 	
 			data_time = between_time_f(start_time,end_time)
@@ -52,10 +51,9 @@ def between_f():
 			input_var = request.form['input_var']
 			start_time = request.form['start_time']
 			end_time = request.form['end_time']
-			variables = choose_queries(input_var)
 			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }
 	
-			csv_write(variables,query)
+			csv_write(input_var,query)
 
 			return render_template('betweenpage.html')
 
@@ -79,25 +77,24 @@ def upto_graph(inputvar):
 
 		if request.form['action'] == 'Graph': 
 			#input_var = str(inputvar) + str(request.args.get('input_var'))
-			input_var = request.args.get('input_var')
+			#input_var = request.args.get('input_var')
+			input_var = inputvar
 			start_time = request.form['start_time']
-			variables = choose_queries(input_var)
 			query = { "timestamp": { "$gte": start_time } }	
 	
 			data_time = upto_time_f(start_time)
-			flo_data, arr_data = upto_search_f(input_var,variables,start_time)
+			flo_data, arr_data = upto_search_f(input_var,start_time)
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
 			return render_template("uptopage_updated.html", plot=graph)
 
 		elif request.form['action'] == 'Log': 
-			input_var = request.form['input_var']
+			#input_var = request.form['input_var']
 			start_time = request.form['start_time']
-			variables = choose_queries(input_var)
 			query = { "timestamp": { "$gte": start_time } }	
 	
-			csv_write(variables,query)
+			csv_write(input_var,query)
 
 			return render_template('uptopage.html')
 
