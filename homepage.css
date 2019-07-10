@@ -16,3 +16,28 @@ div {
 	margin-right: auto;
 	width: 27%;
 }
+
+#choose {
+	margin-top: 10px
+	text-align: center;
+	padding: 15px
+	
+
+}
+
+
+ /* unvisited link */
+a:link, a:visited {
+	background-color: #228B22;
+ 	color: white;
+  	padding: 14px 25px;
+  	text-align: center;
+  	text-decoration: none;
+  	display: inline-block;
+}
+
+
+/* mouse over link */
+a:hover, a:active {
+  background-color: hotpink;
+}
