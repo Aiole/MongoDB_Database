@@ -6,38 +6,69 @@
 
 <body>
 
-<form method="POST">
+
+
+<form method="post" action="/Between">
+
+	<div class="dropdown">
+  	<button class="dropbtn">Single Values</button>
+	<div class="dropdown-content">
+	{% for x in flo %}
+           
+		<a href="/Between/{{x}}">{{x}}</a>
+               
+        {% endfor %}
+	
+  	</div>
+
+
+</form>
+
+<form method="post" action="/Between">
+
+	<div class="dropdown">
+  	<button class="dropbtn">Arrays</button>
+  	<div class="dropdown-content">
+	{% for x in arr %}
+           
+		<a href="/Between/{{x}}">{{x}}</a>
+               
+        {% endfor %}	
+  	</div>
+
+
+</form>
+
+
+	<div id="big_block">
+
+	<form method="post" action="">
 
 	<section>
-	
-	<div style="float:left;margin-right:20px;">
-	<label for="input_var">Variables</label>
-	<input id="input_var" type="text" value="" name="input_var">
-	</div>	
-	
-	<div style="float:left; margin-right:20px;">
-	<label for="start_time">Start Date</label>
+	<div id="input_time" style="float:left;padding-left:5px;padding-right:5px;">
 	<input id="start_time" type="text" value="" name="start_time">
-	</div>
-	
-	<div style="float:left;">
-	<label for="end_time">End Date</label>
+	<label for="start_time">Starting Date</label>	
+
 	<input id="end_time" type="text" value="" name="end_time">
+	<label for="end_time">End Date</label>	
+	
 	</div>
 
 	<br style="clear:both;" />
 
 	</section>
 	
-	<section>
+	<section id="buttons">
 
 	<input type="submit" value="Graph" name="action">
 
 	<input type="submit" value="Log" name="action">
-
+	
 	</section>
 
 </form>
+
+</div>
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
@@ -49,8 +80,9 @@
     </script>
 </div>
 
-<!--
-<table>
+
+
+<!-- <table>
         <tr>
                 <th>Entries</th>
         </tr>
@@ -61,7 +93,6 @@
         {% endfor %}
 </table>
 -->
-
 
 </body>
 </html>
