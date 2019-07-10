@@ -12,11 +12,13 @@
 
 	<div class="dropdown">
   	<button class="dropbtn">Single Values</button>
-  	<div class="dropdown-content">
-	<a href="/UpToPresent/nt_state">nt_state</a>
-	<a href="/UpToPresent/nt_select">nt_select</a>
-	<a href="/UpToPresent/lo_freq">lo_freq</a>
-	<a href="/UpToPresent/lo_power">lo_power</a>	
+	<div class="dropdown-content">
+	{% for x in flo %}
+           
+		<a href="/UpToPresent/{{x}}">{{x}}</a>
+               
+        {% endfor %}
+	
   	</div>
 
 
@@ -26,25 +28,14 @@
 
 	<div class="dropdown">
   	<button class="dropbtn">Arrays</button>
-  	<div class="dropdown-content">
-	<a href="/UpToPresent/sel1X">sel1X</a>
-	<a href="/UpToPresent/sel2X">sel2X</a>
-	<a href="/UpToPresent/hybrid_selX">hybrid_selX</a>
-	<a href="/UpToPresent/intswX">intswX</a>
-	<a href="/UpToPresent/acc_lenX">acc_lenX</a>
-	<a href="/UpToPresent/intLenX">intLenX</a>
-	<a href="/UpToPresent/sel1Y">sel1Y</a>
-	<a href="/UpToPresent/sel2Y">sel2Y</a>
-	<a href="/UpToPresent/hybrid_selY">hybrid_selY</a>
-	<a href="/UpToPresent/intswY">intswY</a>
-	<a href="/UpToPresent/acc_lenY">acc_lenY</a>
-	<a href="/UpToPresent/intLenY">intLenY</a>
-	<a href="/UpToPresent/lfI_X">lfI_X</a>
-	<a href="/UpToPresent/lfQ_X">lfQ_X</a>
-	<a href="/UpToPresent/iflo_x">iflo_x</a>
-	<a href="/UpToPresent/iflo_y">iflo_y</a>	
-	
-  	</div>
+	<div class="dropdown-content">
+	{% for x in arr %}
+           
+		<a href="/UpToPresent/{{x}}">{{x}}</a>
+               
+        {% endfor %}
+	</div>
+
 
 
 </form>
@@ -63,18 +54,25 @@
 	<br style="clear:both;" />
 
 	</section>
+
+	</div>
 	
 	<section id="buttons">
 
 	<input type="submit" value="Graph" name="action">
 
 	<input type="submit" value="Log" name="action">
+
+	<input type="submit" value="Last 24 hours" name="action">
+
+	<input type="submit" value="Last 48 hours" name="action">
+
+	<input type="submit" value="Last 72 hours" name="action">
 	
 	</section>
 
 </form>
 
-</div>
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
