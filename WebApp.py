@@ -60,7 +60,7 @@ def between_f(inputvar):
 			return render_template("betweenpage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars)
 
 
-		elif request.form['action'] == 'Log': 
+		if request.form['action'] == 'Log': 
 			#input_var = request.form['input_var']
 			input_var = inputvar
 			start_time = request.form['start_time']
@@ -126,7 +126,7 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars)
+			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars, start=start_time)
 
 
 		if request.form['action'] == 'Last 48 hours': 
@@ -144,7 +144,7 @@ def upto_graph(inputvar):
 			graph = create_plot(data)
 
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars)
+			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars, start=start_time)
 
 
 		if request.form['action'] == 'Last 72 hours': 
@@ -161,12 +161,13 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars)
+			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars, start=start_time)
 
 
 
 		if request.form['action'] == 'Log': 
 			input_var = inputvar
+			
 			start_time = request.form['start_time']
 			
 			query = { "timestamp": { "$gte": start_time } }	
