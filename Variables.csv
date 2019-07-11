@@ -1,0 +1,5 @@
+floats: nt_state,nt_select,lo_freq,lo_power
+arrays: sel1X,sel2X,hybrid_selX,intswX,acc_lenX,intLenX,sel1Y,sel2Y,hybrid_selY,intswY,acc_lenY,intLenY,lfI_X,lfQ_X,lfI_Y,lfQ_Y,iflo_x,iflo_y
+
+
+
