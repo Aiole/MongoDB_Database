@@ -25,12 +25,20 @@ test_database = db.test_database #for Ranjani's version change to db.ytla_archiv
 
 def flo_names():
 
-	return ['nt_state','nt_select','lo_freq','lo_power']
+	lines = open('Variables.csv').read().splitlines()
+	floats = lines[0].split('floats: ')[1]
+	floats = floats.split(',')
+
+	return floats
 
 
 def arr_names():
 	
-	return ['sel1X','sel2X','hybrid_selX','intswX','acc_lenX','intLenX','sel1Y','sel2Y','hybrid_selY','intswY','acc_lenY','intLenY','lfI_X','lfQ_X','lfI_Y','lfQ_Y','iflo_x','iflo_y']
+	lines = open('Variables.csv').read().splitlines()
+	arrays = lines[1].split('arrays: ')[1]
+	arrays = arrays.split(',')
+
+	return arrays
 	
 
 #Chooses desired search method
@@ -222,7 +230,7 @@ def csv_write(input_var,query):
 	count = results.count()
 	a = 1
 	data_c = data.split("'),")
-	#removes unnecessary data like the id
+	#Removes unnecessary data like the id
 	while a < count:
 		data_cs = data_c[a].split('}')[0]
 		data_csv.append(data_cs)
@@ -272,7 +280,9 @@ def create_df(input_var,flo_data,arr_data,data_time):
 			x = df['x'],
 			y = df['y'],
 			mode = 'lines',
-		    	name = input_var + '[' + str(array_index) + ']'				
+		    	name = input_var + '[' + str(array_index) + ']',
+			hoverlabel_font_size = 30
+			
 			))
 			array_index+=1
 
