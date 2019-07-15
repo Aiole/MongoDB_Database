@@ -7,7 +7,6 @@ import csv
 import logging
 import datetime
 import time
-import datetime
 
 #Setup for connecting to MongoDB
 from pymongo import MongoClient
@@ -26,7 +25,7 @@ test_database = db.test_database #for Ranjani's version change to db.ytla_archiv
 def flo_names():
 
 	lines = open('Variables.csv').read().splitlines()
-	floats = lines[0].split('floats: ')[1]
+	floats = lines[0].split('global parameters: ')[1]
 	floats = floats.split(',')
 
 	return floats
@@ -35,7 +34,16 @@ def flo_names():
 def arr_names():
 	
 	lines = open('Variables.csv').read().splitlines()
-	arrays = lines[1].split('arrays: ')[1]
+	arrays = lines[1].split('digital parameters: ')[1]
+	arrays = arrays.split(',')
+
+	return arrays
+
+
+def analog_names():
+	
+	lines = open('Variables.csv').read().splitlines()
+	arrays = lines[2].split('analog parameters: ')[1]
 	arrays = arrays.split(',')
 
 	return arrays
@@ -56,8 +64,6 @@ def choose_search(search_method):
 
 #Returns 2 arrays of data one is empty one will contain the parsed data of the given input_var
 def between_search_f(input_var,query):
-	
-	data_list = []
 	
 	#Only one will have data in it depending on the input_var
 	flo_data, arr_data = query_type(input_var, query)
@@ -126,6 +132,8 @@ def query_type(input_var,query):
 	arr_vars = arr_names()
 
 	flo_vars = flo_names()
+	
+	analog_vars = analog_names()
 
 	#Calls float_parse if it is in the flo_names
 	if input_var in flo_vars:
@@ -137,11 +145,14 @@ def query_type(input_var,query):
 	input_var = str(input_var)
 
 	#Calls array_parse if it is in the arr_names
-	if input_var in arr_vars:
+	if input_var in arr_vars or input_var in analog_vars:
 		arr_data = array_parse(input_var,query)
 		
 	else:
 		arr_data = []	
+
+	
+
 
 	return flo_data, arr_data
 	
@@ -255,36 +266,41 @@ def create_df(input_var,flo_data,arr_data,data_time):
 
 	flo_vars = flo_names()
 
+	analog_vars = analog_names()
+
 	#Puts the float data into a data frame to get it ready for graphing	
 	if input_var in flo_vars:
 					
 		x = np.asarray(data_time)
 		y = np.asarray(flo_data)
 		df = pd.DataFrame({'x': x, 'y': y})
-		data.append(go.Scatter(
+		data.append(go.Scattergl(
 		x = df['x'],
 		y = df['y'],
-		mode = 'lines',
-	    	name = str(input_var)				
+		mode = 'markers',
+	    	name = str(input_var),	
+		hoverlabel_font_size = 30			
 			))
 
 	#Puts the array data into a data frame to get it ready for graphing
-	if input_var in arr_vars:
+	if (input_var in arr_vars) or (input_var in analog_vars):
 		x = np.asarray(data_time)
-		y = np.asarray(flo_data)
+		y = np.asarray(arr_data)
 		array_index = 0 
 		while array_index < 8:
 			y = arr_data[:,array_index]
 			df = pd.DataFrame({'x': x, 'y': y})
-			data.append(go.Scatter(
+			data.append(go.Scattergl(
 			x = df['x'],
 			y = df['y'],
-			mode = 'lines',
+			mode = 'markers',
 		    	name = input_var + '[' + str(array_index) + ']',
-			hoverlabel_font_size = 30
-			
+			hoverlabel_font_size = 30	
+
 			))
 			array_index+=1
+
+
 
 
 
@@ -294,33 +310,7 @@ def create_df(input_var,flo_data,arr_data,data_time):
 def get_results(query,input_var):
 	return test_database.find(query,{str(input_var):1})
 
-#delete
-def var_guess(input_var):
 
-	all_vars = ['float_1', 'float_2', 'float_3', 'float_4', 'array_1', 'array_2', 'array_3', 'array_4', 'array_5', 'array_6', 'array_7', 'array_8']
-
-	if input_var in all_vars:
-		return input_var
-
-	float_vars = ['float_1', 'float_2', 'float_3', 'float_4']
-	if input_var.startswith('f'):
-		return float_vars
-	
-	array_vars = ['array_1', 'array_2', 'array_3', 'array_4', 'array_5', 'array_6', 'array_7', 'array_8']
-	if input_var.startswith('a'):
-		return float_vars
-	
-	return
-
-#delete
-def convert_time(start_time):
-
-	
-	print(start_time)
-	# string to timedelta
-	t = datetime.datetime.strptime(start_time,":%Y-%m-%d %H:%M:%S")
-	td2 = datetime.timedelta(years=t.year, months=t.month, days=t.day, hours=t.hour, minutes=t.minute, seconds=t.second)
-	return td2
 
 
 
