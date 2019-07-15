@@ -41,6 +41,8 @@ while 1:
 
 	array_19=[0]*8
 	array_20=[0.0]*8
+	array_21=[0.0]*8
+	array_22=[0.0]*8
 
 
 
@@ -63,7 +65,7 @@ while 1:
 	float_4 = random.randrange(1,10000) / 1000
 
 	while i < 8:
-		array_1[i] = random.randrange(1,10000) / 1000
+		array_1[i] = random.randrange(500000,1000000) / 10
 		array_2[i] = random.randrange(1,10000) / 1000 
 		array_3[i] = random.randrange(1,10000) / 1000
 		array_4[i] = random.randrange(1,10000) / 1000
@@ -75,6 +77,8 @@ while 1:
 		array_10[i] = random.randrange(1,10000) / 1000
 		array_11[i] = random.randrange(1,10000) / 1000
 		array_12[i] = random.randrange(1,10000) / 1000
+		array_21[i] = random.randrange(1,10000) / 1000
+		array_22[i] = random.randrange(1,10000) / 1000
 		i+=1
 	
 	timenow = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.utcnow())
@@ -109,8 +113,8 @@ while 1:
 		'intLenY': ', '.join(str(e) for e in array_20),
 		'lfI_X':', '.join(str(e) for e in lfI_X),
 		'lfQ_X':', '.join(str(e) for e in lfQ_X),
-        	'iflo_x':', '.join(str(e) for e in iflo_x),
-        	'iflo_y':', '.join(str(e) for e in iflo_y)
+        	'iflo_x':', '.join(str(e) for e in array_21),
+        	'iflo_y':', '.join(str(e) for e in array_22)
 	}
 
 
