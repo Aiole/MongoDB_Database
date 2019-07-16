@@ -24,30 +24,55 @@ test_database = db.test_database #for Ranjani's version change to db.ytla_archiv
 
 def flo_names():
 
+	floats = []
 	lines = open('Variables.csv').read().splitlines()
-	floats = lines[0].split('global parameters: ')[1]
-	floats = floats.split(',')
+	for line in lines:
+		if 'type=float' in line:
+			flo = line.split(': ')[1]
+			flo = flo.split(',')
+			floats.extend(flo)
+	
+
 
 	return floats
 
 
 def arr_names():
-	
+	arrays = []
 	lines = open('Variables.csv').read().splitlines()
-	arrays = lines[1].split('digital parameters: ')[1]
-	arrays = arrays.split(',')
-
-	return arrays
-
-
-def analog_names():
+	for line in lines:
+		if 'type=array' in line:
+			array = line.split(': ')[1]
+			array = array.split(',')
+			arrays.extend(array)
 	
-	lines = open('Variables.csv').read().splitlines()
-	arrays = lines[2].split('analog parameters: ')[1]
-	arrays = arrays.split(',')
 
+	
 	return arrays
 	
+
+def all_vars():
+
+	all_vars = []
+	lines = open('Variables.csv').read().splitlines()
+	for line in lines:
+		if ': ' in line:
+			name = line.split(': ')[0]
+			name = name.split(', ')[1]
+			var = line.split(': ')[1]
+			var = var.split(',')
+			name = name.title()
+			var.insert(0, name)
+			all_vars.append(var)
+	
+
+	
+	return all_vars
+	
+
+
+
+
 
 #Chooses desired search method
 def choose_search(search_method):
@@ -133,23 +158,17 @@ def query_type(input_var,query):
 
 	flo_vars = flo_names()
 	
-	analog_vars = analog_names()
 
 	#Calls float_parse if it is in the flo_names
 	if input_var in flo_vars:
 		flo_data = float_parse(input_var,query)
+		arr_data = []
 	
 	else:
-		flo_data = []
-
-	input_var = str(input_var)
-
-	#Calls array_parse if it is in the arr_names
-	if input_var in arr_vars or input_var in analog_vars:
 		arr_data = array_parse(input_var,query)
+		flo_data = []
 		
-	else:
-		arr_data = []	
+	
 
 	
 
@@ -234,7 +253,10 @@ def array_parse(input_var, query):
 def csv_write(input_var,query):
 
 	#Parses the data by creating new lines so it isnt one long mess
-	data_log = open('DataLog.csv', 'w')
+	
+	timenow = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.utcnow())
+	dir_name = '/home/corr/dbDownloads/' + timenow + '.csv'
+	data_log = open(dir_name, 'w')
 	data_csv = []
 	results = get_results(query,input_var)
 	data = '\n'.join(map(str, results))
@@ -266,7 +288,6 @@ def create_df(input_var,flo_data,arr_data,data_time):
 
 	flo_vars = flo_names()
 
-	analog_vars = analog_names()
 
 	#Puts the float data into a data frame to get it ready for graphing	
 	if input_var in flo_vars:
@@ -274,7 +295,7 @@ def create_df(input_var,flo_data,arr_data,data_time):
 		x = np.asarray(data_time)
 		y = np.asarray(flo_data)
 		df = pd.DataFrame({'x': x, 'y': y})
-		data.append(go.Scattergl(
+		data.append(go.Scatter(
 		x = df['x'],
 		y = df['y'],
 		mode = 'markers',
@@ -283,14 +304,14 @@ def create_df(input_var,flo_data,arr_data,data_time):
 			))
 
 	#Puts the array data into a data frame to get it ready for graphing
-	if (input_var in arr_vars) or (input_var in analog_vars):
+	if input_var in arr_vars:
 		x = np.asarray(data_time)
 		y = np.asarray(arr_data)
 		array_index = 0 
 		while array_index < 8:
 			y = arr_data[:,array_index]
 			df = pd.DataFrame({'x': x, 'y': y})
-			data.append(go.Scattergl(
+			data.append(go.Scatter(
 			x = df['x'],
 			y = df['y'],
 			mode = 'markers',
