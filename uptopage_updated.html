@@ -7,16 +7,25 @@
 <body>
 
 
+<form>
+
+<a id="home" href="/"> Home </a>
+
+</form>
+
+
+{% for single_var in var %}
 
 <form method="post" action="/UpToPresent">
 
 	<div class="dropdown">
-  	<button class="dropbtn">Single Values</button>
+  	<button class="dropbtn">{{single_var[0]}}</button>
 	<div class="dropdown-content">
-	{% for x in flo %}
+	{% for x in single_var[1:] %}
            
 		<a href="/UpToPresent/{{x}}">{{x}}</a>
-               
+
+	
         {% endfor %}
 	
   	</div>
@@ -24,21 +33,7 @@
 
 </form>
 
-<form method="post" action="/UpToPresent">
-
-	<div class="dropdown">
-  	<button class="dropbtn">Arrays</button>
-	<div class="dropdown-content">
-	{% for x in arr %}
-           
-		<a href="/UpToPresent/{{x}}">{{x}}</a>
-               
-        {% endfor %}
-	</div>
-
-
-
-</form>
+{% endfor %}
 
 
 	<div id="big_block">
@@ -47,9 +42,17 @@
 
 	<section>
 	<div id="input_time" style="float:left;">
-	<input id="start_time" type="text" value="" name="start_time">
-	<label for="start_time">From this Date to the Present</label>	
+	<input id="start_time" type="text" value="{{start}}" name="start_time" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31)) (0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}">
+
+
 	</div>
+
+	<div id="time_label">
+
+	<label for="start_time">From this Date to the Present ('YYYY-MM-DD hh:mm:ss' format please)</label>	
+
+	</div>
+
 
 	<br style="clear:both;" />
 
@@ -61,7 +64,7 @@
 
 	<input type="submit" value="Graph" name="action">
 
-	<input type="submit" value="Log" name="action">
+	<input type="submit" value="Download to csv file in dbDownloads" name="action">
 
 	<input type="submit" value="Last 24 hours" name="action">
 
@@ -72,6 +75,8 @@
 	</section>
 
 </form>
+
+	<h2> {{note}} </h2>
 
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
