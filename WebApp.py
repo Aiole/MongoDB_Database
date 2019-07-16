@@ -1,11 +1,12 @@
 import os, flask
 from flask import Flask, render_template, request, redirect, url_for
-from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, var_guess, convert_time, flo_names, arr_names
+from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, flo_names, arr_names, all_vars
 from Graph import create_plot
 import csv
 import datetime
 from datetime import timedelta
 import time
+import logging
 
 
 app = flask.Flask(__name__)
@@ -28,9 +29,10 @@ def search():
 #Between Page Display
 @app.route('/Between')
 def between():
-	flo_vars = flo_names()
-	arr_vars = arr_names()
-	return render_template('betweenpage.html', flo=flo_vars, arr=arr_vars)
+		
+	every_var = all_vars()
+
+	return render_template('betweenpage.html', var=every_var)
 
 
 
@@ -38,14 +40,20 @@ def between():
 @app.route('/Between/<inputvar>', methods=['GET','POST'])
 def between_f(inputvar):
 
-	flo_vars = flo_names()
-	arr_vars = arr_names()
+	every_var = all_vars()
+	input_var = inputvar
+
+	lines = open('VariableNotes.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			notes = x.split(': ')[1]
+			break
+
 	if request.method == 'POST':
 
 		if request.form['action'] == 'Graph': 
 			#input_var = str(inputvar) + str(request.args.get('input_var'))
 			#input_var = request.args.get('input_var')
-			input_var = inputvar
 			start_time = request.form['start_time']
 			end_time = request.form['end_time']
 
@@ -57,49 +65,52 @@ def between_f(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("betweenpage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars)
+			return render_template("betweenpage_updated.html",plot=graph, var=every_var, note=notes)
 
 
-		if request.form['action'] == 'Log': 
+		if request.form['action'] == 'Download to csv file in dbDownloads': 
 			#input_var = request.form['input_var']
-			input_var = inputvar
 			start_time = request.form['start_time']
 			end_time = request.form['end_time']
 			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }
 	
 			csv_write(input_var,query)
 
-			return render_template('betweenpage.html', flo=flo_vars, arr=arr_vars)
+			return render_template('betweenpage.html', var=every_var, note=notes)
 
 
 		else:
-			return render_template('betweenpage.html', flo=flo_vars, arr=arr_vars)
+			return render_template('betweenpage.html', var=every_var, note=notes)
 
 	else:
-		return render_template('betweenpage.html', flo=flo_vars, arr=arr_vars)
+		return render_template('betweenpage.html', var=every_var, note=notes)
 
 
 #Between Page Display
 @app.route('/UpToPresent')
 def upto():
-	flo_vars = flo_names()
-	arr_vars = arr_names()
-	return render_template('uptopage.html', flo=flo_vars, arr=arr_vars)
+	every_var = all_vars()
+	return render_template('uptopage.html', var=every_var)
 
 
 #Grabs values from html form and upto_search_f from Search.py
 @app.route('/UpToPresent/<inputvar>', methods=['Get','POST'])
 def upto_graph(inputvar):
 
-	flo_vars = flo_names()
-	arr_vars = arr_names()
+	every_var = all_vars()
+	input_var = inputvar
+
+	lines = open('VariableNotes.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			notes = x.split(': ')[1]
+			break
 
 	if request.method == 'POST':
 
 		if request.form['action'] == 'Graph': 
 			#input_var = str(inputvar) + str(request.args.get('input_var'))
 			#input_var = request.args.get('input_var')
-			input_var = inputvar
 			start_time = request.form['start_time']
 			#Sets the greater than or equal to parameter with regards to start time	
 			query = { "timestamp": { "$gte": start_time } }	
@@ -109,15 +120,14 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars)
+			return render_template("uptopage_updated.html", plot=graph, var=every_var, note=notes)
 
 
 		if request.form['action'] == 'Last 24 hours': 
-			input_var = inputvar
 			starttime = datetime.datetime.utcnow()
 			#start_time = convert_time(start_time)
 			starttime -= timedelta(hours = 24)
-			start_time = str(starttime)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
 			
 			query = { "timestamp": { "$gte": start_time } }		
 	
@@ -126,15 +136,14 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars, start=start_time)
+			return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
 
 		if request.form['action'] == 'Last 48 hours': 
-			input_var = inputvar
 			starttime = datetime.datetime.utcnow()
 			#start_time = convert_time(start_time)
 			starttime -= timedelta(hours = 48)
-			start_time = str(starttime)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
 			
 			query = { "timestamp": { "$gte": start_time } }		
 	
@@ -144,15 +153,14 @@ def upto_graph(inputvar):
 			graph = create_plot(data)
 
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars, start=start_time)
+			return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
 
 		if request.form['action'] == 'Last 72 hours': 
-			input_var = inputvar
 			starttime = datetime.datetime.utcnow()
 			#start_time = convert_time(start_time)
 			starttime -= timedelta(hours = 72)
-			start_time = str(starttime)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
 			
 			query = { "timestamp": { "$gte": start_time } }		
 	
@@ -161,26 +169,25 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, flo=flo_vars, arr=arr_vars, start=start_time)
+			return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
 
 
-		if request.form['action'] == 'Log': 
-			input_var = inputvar
+		if request.form['action'] == 'Download to csv file in dbDownloads': 
 			
 			start_time = request.form['start_time']
 			
 			query = { "timestamp": { "$gte": start_time } }	
 			csv_write(input_var,query)
 
-			return render_template('uptopage.html', flo=flo_vars, arr=arr_vars)
+			return render_template('uptopage.html', var=every_var, note=notes)
 
 
 		else:
-			return render_template('uptopage.html', flo=flo_vars, arr=arr_vars)
+			return render_template('uptopage.html', var=every_var, note=notes)
 
 	else:
-		return render_template('uptopage.html', flo=flo_vars, arr=arr_vars)
+		return render_template('uptopage.html', var=every_var, note=notes)
 
 
 
