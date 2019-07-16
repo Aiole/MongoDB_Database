@@ -2,10 +2,33 @@ body {
 	background-color: powderblue;
 }
 
+
+#home{
+
+	background-color: #f44336;
+ 	color: white;
+	font-weight: bold;
+  	padding: 14px 25px;
+  	text-align: center;
+  	text-decoration: none;
+  	display: inline-block;
+}
+
+#home:hover, #home:active {
+  background-color: #FF6347;
+}
+
+
+
 #buttons {
-	padding: 10px;	
+
 	text-align: center;
-	margin-right: 250px;
+	margin-right: 290px;
+
+}
+
+#note {
+	text-align: center;
 
 }
 
@@ -22,10 +45,20 @@ body {
 
 }
 
+
+
+
+#time_label{
+	clear:both;
+	padding: 10px;
+
+}
+
+
 #big_block {
 	margin: auto;
 	width: 50%;
-	padding: 30px;
+	padding: 20px;
 	margin-top: 70px;
 
 }
