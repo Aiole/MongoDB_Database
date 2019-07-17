@@ -261,20 +261,27 @@ def csv_write(input_var,query):
 	results = get_results(query,input_var)
 	data = '\n'.join(map(str, results))
 	count = results.count()
-	a = 1
-	data_c = data.split("'),")
+	print(data)
+	data_c = data.split("'), '")
 	#Removes unnecessary data like the id
-	while a < count:
-		data_cs = data_c[a].split('}')[0]
-		data_csv.append(data_cs)
-		a+=1
 	
+	for d in data_c:
+		data_cs = d.split('}')[0]
+		data_csv.append(data_cs)
+	
+	
+
+
+	if len(data_csv) == 1:
+		data_csv = ['No data for this variable within the current times']
 
 	data_csv = '\n'.join(map(str, data_csv))
 	#Opens and pastes the array into the document
 	with data_log:
 		writer = csv.writer(data_log)
 		writer.writerows([data_csv.split('","')])
+
+	return
 
 
 #A function that prepares the data to be graphed by putting it in a plotly friendly data frame
@@ -298,7 +305,7 @@ def create_df(input_var,flo_data,arr_data,data_time):
 		data.append(go.Scatter(
 		x = df['x'],
 		y = df['y'],
-		mode = 'markers',
+		mode = 'lines',
 	    	name = str(input_var),	
 		hoverlabel_font_size = 30			
 			))
@@ -314,7 +321,7 @@ def create_df(input_var,flo_data,arr_data,data_time):
 			data.append(go.Scatter(
 			x = df['x'],
 			y = df['y'],
-			mode = 'markers',
+			mode = 'lines',
 		    	name = input_var + '[' + str(array_index) + ']',
 			hoverlabel_font_size = 30	
 
