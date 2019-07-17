@@ -109,8 +109,6 @@ def upto_graph(inputvar):
 	if request.method == 'POST':
 
 		if request.form['action'] == 'Graph': 
-			#input_var = str(inputvar) + str(request.args.get('input_var'))
-			#input_var = request.args.get('input_var')
 			start_time = request.form['start_time']
 			#Sets the greater than or equal to parameter with regards to start time	
 			query = { "timestamp": { "$gte": start_time } }	
@@ -120,12 +118,15 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, var=every_var, note=notes)
+			try:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
 
 
 		if request.form['action'] == 'Last 24 hours': 
 			starttime = datetime.datetime.utcnow()
-			#start_time = convert_time(start_time)
 			starttime -= timedelta(hours = 24)
 			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
 			
@@ -136,12 +137,18 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+			try:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
+
+
+	
 
 
 		if request.form['action'] == 'Last 48 hours': 
 			starttime = datetime.datetime.utcnow()
-			#start_time = convert_time(start_time)
 			starttime -= timedelta(hours = 48)
 			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
 			
@@ -153,12 +160,15 @@ def upto_graph(inputvar):
 			graph = create_plot(data)
 
 
-			return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+			try:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
 
 
 		if request.form['action'] == 'Last 72 hours': 
 			starttime = datetime.datetime.utcnow()
-			#start_time = convert_time(start_time)
 			starttime -= timedelta(hours = 72)
 			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
 			
@@ -169,7 +179,11 @@ def upto_graph(inputvar):
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data)
 
-			return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+			try:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
 
 
 
@@ -178,16 +192,32 @@ def upto_graph(inputvar):
 			start_time = request.form['start_time']
 			
 			query = { "timestamp": { "$gte": start_time } }	
+			
+			
 			csv_write(input_var,query)
 
-			return render_template('uptopage.html', var=every_var, note=notes)
+
+			try:
+				return render_template('uptopage.html', var=every_var, note=notes)
+
+			except UnboundLocalError:
+				return render_template('uptopage.html', var=every_var)
+				
 
 
 		else:
-			return render_template('uptopage.html', var=every_var, note=notes)
+			try:
+				return render_template('uptopage.html', var=every_var, note=notes)
+
+			except UnboundLocalError:
+				return render_template('uptopage.html', var=every_var)
 
 	else:
-		return render_template('uptopage.html', var=every_var, note=notes)
+		try:
+			return render_template('uptopage.html', var=every_var, note=notes)
+
+		except UnboundLocalError:
+			return render_template('uptopage.html', var=every_var)
 
 
 
