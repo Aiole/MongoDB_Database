@@ -1,0 +1,33 @@
+---General Notes---
+-For all uses of < > type exactly what is within excluding the arrow brackets  
+
+
+
+
+
+
+---Variables.csv---
+
+-The Variables.csv file should be located in the same directory as the rest of the python scripts (Search.py,WebApp.py,etc...)
+
+-Each line in the file is for 1 category of variable that must all be of a similar type and the start of each line must be <type=float> or <type=array> without any spaces as shown.
+
+-Directly after the <type=_____> without any spaces comes the name you wish to have displayed for the category this will be in the form <, the name you would like: > make sure to include all spaces for far you could have an entry of the form <type=_____, ____ ____: >
+
+-Now comes the list of variables these must match exactly the names that are within the database and this list can be any length although I wouldnt recommend more than 20. The form will be <var1,var2,var3> with no spaces.
+
+--So in conclusion the form should be as follows: <type=_____, ____ ____: ___,___,___,___> an actual example would look something like 
+<type=float, the name: var1,var2,var3,var4> without the < > 
+
+
+
+
+---VariableNotes.csv---
+
+-Like the Variables.csv file the VariableNotes.csv file should also be located in the same directory as the rest of the python scripts (Search.py,WebApp.py,etc...)
+
+-Each line in the VariableNotes.csv is for 1 variable (do not try to put multiple variables on the same line).
+
+-The general form is <____: _________________> where the first blank is the variable name and the second blank is the associated note for that variable (the variable name must exactly match the variable name within the database).
+
+--An actual example of a one line in the file would be <var1: This is a note that would show up for var1>
