@@ -7,6 +7,7 @@ import csv
 import logging
 import datetime
 import time
+import json
 
 #Setup for connecting to MongoDB
 from pymongo import MongoClient
@@ -22,6 +23,7 @@ test_database = db.test_database #for Ranjani's version change to db.ytla_archiv
 
 
 
+#Reads in the float type variables
 def flo_names():
 
 	floats = []
@@ -36,7 +38,7 @@ def flo_names():
 
 	return floats
 
-
+#Reads in the array type variables
 def arr_names():
 	arrays = []
 	lines = open('Variables.csv').read().splitlines()
@@ -51,6 +53,7 @@ def arr_names():
 	return arrays
 	
 
+#Reads in all the variables as seperate lists based on their categories
 def all_vars():
 
 	all_vars = []
@@ -302,10 +305,10 @@ def create_df(input_var,flo_data,arr_data,data_time):
 		x = np.asarray(data_time)
 		y = np.asarray(flo_data)
 		df = pd.DataFrame({'x': x, 'y': y})
-		data.append(go.Scatter(
+		data.append(go.Scattergl(
 		x = df['x'],
 		y = df['y'],
-		mode = 'lines',
+		mode = 'markers', #lines or markers
 	    	name = str(input_var),	
 		hoverlabel_font_size = 30			
 			))
@@ -318,10 +321,10 @@ def create_df(input_var,flo_data,arr_data,data_time):
 		while array_index < 8:
 			y = arr_data[:,array_index]
 			df = pd.DataFrame({'x': x, 'y': y})
-			data.append(go.Scatter(
+			data.append(go.Scattergl(
 			x = df['x'],
 			y = df['y'],
-			mode = 'lines',
+			mode = 'markers', #lines or markers
 		    	name = input_var + '[' + str(array_index) + ']',
 			hoverlabel_font_size = 30	
 
@@ -334,11 +337,82 @@ def create_df(input_var,flo_data,arr_data,data_time):
 
 	return data
 
-#This function is useless
+
+#Changes the layout of the plotly graph
+def create_plot(data,yaxis,title):
+
+
+	layout = go.Layout(
+
+		autosize=True,
+		width=1500,
+		height=900,
+
+		paper_bgcolor='#ffffff',
+		plot_bgcolor='#ffffff',
+
+		title=title,
+		titlefont=dict(
+		    size=30,
+		    color='black'
+		),
+		
+		xaxis=dict(
+		title='Time in UTC',
+		titlefont=dict(
+		    size=20,
+		    color='black'
+		),
+		showticklabels=True,
+		tickfont=dict(
+		    size=20,
+		    color='black'
+		),
+		exponentformat='e',
+		showexponent='all'
+	    ),
+	    yaxis=dict(
+		title=yaxis,
+		titlefont=dict(
+		    size=20,
+		    color='black'
+		),
+		showticklabels=True,
+		tickfont=dict(
+		    size=20,
+		    color='black'
+		),
+		exponentformat='none'
+	    ),
+	
+	
+		
+		
+	)
+
+
+	
+
+
+	fig = go.Figure(data=data, layout=layout)
+
+
+
+
+	graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+	return graphJSON
+
+
+#This function is useless?
 def get_results(query,input_var):
 	return test_database.find(query,{str(input_var):1})
 
 
+def not_var(input_var,every_var):
+	for x in every_var:
+		if input_var in x:
+			return False
 
-
+	return True
 
