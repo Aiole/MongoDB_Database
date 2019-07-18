@@ -1,7 +1,6 @@
 import os, flask
 from flask import Flask, render_template, request, redirect, url_for
-from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, flo_names, arr_names, all_vars
-from Graph import create_plot
+from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, flo_names, arr_names, all_vars, not_var, create_plot
 import csv
 import datetime
 from datetime import timedelta
@@ -43,19 +42,41 @@ def between_f(inputvar):
 	every_var = all_vars()
 	input_var = inputvar
 
+
 	lines = open('VariableNotes.csv').read().splitlines()
 	for x in lines:
 		if input_var in x:
 			notes = x.split(': ')[1]
 			break
 
+	lines = open('YAxis.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			yaxis = x.split(': ')[1]
+			break
+
+	lines = open('Titles.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			title = x.split(': ')[1]
+			break
+
 	if request.method == 'POST':
 
 		if request.form['action'] == 'Graph': 
-			#input_var = str(inputvar) + str(request.args.get('input_var'))
-			#input_var = request.args.get('input_var')
 			start_time = request.form['start_time']
 			end_time = request.form['end_time']
+
+			if(start_time == ''):
+				return render_template("betweenpage_updated.html", var=every_var, start='Enter a start time here', note='You did not enter a start time')
+
+			if(end_time == ''):
+				return render_template("betweenpage_updated.html", var=every_var, start=start_time, end='Enter an end time here', note='You did not enter an end time')
+
+
+			if start_time > end_time:
+				return render_template("betweenpage_updated.html",var=every_var, note='You entered a start time that was greater than your end time')
+			
 
 			#Sets the gte and lte parameters for start_time and end_time	
 			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }	
@@ -63,27 +84,41 @@ def between_f(inputvar):
 			data_time = between_time_f(query)
 			flo_data, arr_data = between_search_f(input_var,query)
 			data = create_df(input_var,flo_data,arr_data,data_time)
-			graph = create_plot(data)
+			graph = create_plot(data,yaxis,title)
+			
+			try:
+				return render_template("betweenpage_updated.html",plot=graph, var=every_var, note=notes)
 
-			return render_template("betweenpage_updated.html",plot=graph, var=every_var, note=notes)
+			except UnboundLocalError:
+				return render_template("betweenpage_updated.html",plot=graph, var=every_var)			
+	
+			
 
 
-		if request.form['action'] == 'Download to csv file in dbDownloads': 
-			#input_var = request.form['input_var']
+		if request.form['action'] == 'Download to csv file': 
 			start_time = request.form['start_time']
 			end_time = request.form['end_time']
 			query = { "timestamp": { "$gte": start_time, "$lte": end_time  } }
 	
 			csv_write(input_var,query)
-
-			return render_template('betweenpage.html', var=every_var, note=notes)
+			
+			return render_template('betweenpage.html', var=every_var, note='File saved to /corr/home/dbDownloads')
 
 
 		else:
-			return render_template('betweenpage.html', var=every_var, note=notes)
+			try:
+				return render_template('betweenpage.html', var=every_var, note=notes)
+
+			except UnboundLocalError:
+				return render_template('betweenpage.html', var=every_var)
+			
 
 	else:
-		return render_template('betweenpage.html', var=every_var, note=notes)
+		try:
+			return render_template('betweenpage.html', var=every_var, note=notes)
+
+		except UnboundLocalError:
+			return render_template('betweenpage.html', var=every_var)
 
 
 #Between Page Display
@@ -99,6 +134,10 @@ def upto_graph(inputvar):
 
 	every_var = all_vars()
 	input_var = inputvar
+	
+	if not_var(input_var,every_var):
+		return render_template("uptopage_updated.html", var=every_var, note='This variable is not in the Database')
+
 
 	lines = open('VariableNotes.csv').read().splitlines()
 	for x in lines:
@@ -106,17 +145,40 @@ def upto_graph(inputvar):
 			notes = x.split(': ')[1]
 			break
 
+
+	lines = open('YAxis.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			yaxis = x.split(': ')[1]
+			break
+
+	lines = open('Titles.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			title = x.split(': ')[1]
+			break
+
 	if request.method == 'POST':
 
 		if request.form['action'] == 'Graph': 
 			start_time = request.form['start_time']
+
+			if(start_time == ''):
+				return render_template("uptopage_updated.html", var=every_var, start='Enter a start time here', note='You did not enter a start time')
+
 			#Sets the greater than or equal to parameter with regards to start time	
 			query = { "timestamp": { "$gte": start_time } }	
 	
 			data_time = upto_time_f(query)
 			flo_data, arr_data = upto_search_f(input_var,query)
-			data = create_df(input_var,flo_data,arr_data,data_time)
-			graph = create_plot(data)
+			try:
+				data = create_df(input_var,flo_data,arr_data,data_time)
+				graph = create_plot(data,yaxis,title)
+
+			except ValueError:
+				notes = 'You must enter a time before graphing'
+				return render_template("uptopage_updated.html", var=every_var, start=start_time, note=notes)
+
 
 			try:
 				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
@@ -135,7 +197,7 @@ def upto_graph(inputvar):
 			data_time = upto_time_f(query)
 			flo_data, arr_data = upto_search_f(input_var,query)
 			data = create_df(input_var,flo_data,arr_data,data_time)
-			graph = create_plot(data)
+			graph = create_plot(data,yaxis,title)
 
 			try:
 				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
@@ -157,7 +219,7 @@ def upto_graph(inputvar):
 			data_time = upto_time_f(query)
 			flo_data, arr_data = upto_search_f(input_var,query)
 			data = create_df(input_var,flo_data,arr_data,data_time)
-			graph = create_plot(data)
+			graph = create_plot(data,yaxis,title)
 
 
 			try:
@@ -177,7 +239,7 @@ def upto_graph(inputvar):
 			data_time = upto_time_f(query)
 			flo_data, arr_data = upto_search_f(input_var,query)
 			data = create_df(input_var,flo_data,arr_data,data_time)
-			graph = create_plot(data)
+			graph = create_plot(data,yaxis,title)
 
 			try:
 				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
@@ -187,7 +249,7 @@ def upto_graph(inputvar):
 
 
 
-		if request.form['action'] == 'Download to csv file in dbDownloads': 
+		if request.form['action'] == 'Download to csv file': 
 			
 			start_time = request.form['start_time']
 			
@@ -197,11 +259,8 @@ def upto_graph(inputvar):
 			csv_write(input_var,query)
 
 
-			try:
-				return render_template('uptopage.html', var=every_var, note=notes)
+			return render_template('uptopage.html', var=every_var, note='File saved to /corr/home/dbDownloads')
 
-			except UnboundLocalError:
-				return render_template('uptopage.html', var=every_var)
 				
 
 
@@ -221,9 +280,9 @@ def upto_graph(inputvar):
 
 
 
-@app.route('/landingpage')
+'''@app.route('/landingpage')
 def landing_page():
-    id = request.args['id']
+    id = request.args['id']'''
 	
     
 if __name__ == "__main__":
