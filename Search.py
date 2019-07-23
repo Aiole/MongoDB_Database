@@ -256,7 +256,6 @@ def array_parse(input_var, query):
 def csv_write(input_var,query):
 
 	#Parses the data by creating new lines so it isnt one long mess
-	
 	timenow = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.utcnow())
 	dir_name = '/home/corr/dbDownloads/' + timenow + '.csv'
 	data_log = open(dir_name, 'w')
@@ -266,8 +265,8 @@ def csv_write(input_var,query):
 	count = results.count()
 	print(data)
 	data_c = data.split("'), '")
+
 	#Removes unnecessary data like the id
-	
 	for d in data_c:
 		data_cs = d.split('}')[0]
 		data_csv.append(data_cs)
@@ -409,6 +408,7 @@ def get_results(query,input_var):
 	return test_database.find(query,{str(input_var):1})
 
 
+#Will return a boolean for if a variable is within the variable list
 def not_var(input_var,every_var):
 	for x in every_var:
 		if input_var in x:
