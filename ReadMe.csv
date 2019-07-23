@@ -31,3 +31,10 @@
 -The general form is <____: _________________> where the first blank is the variable name and the second blank is the associated note for that variable (the variable name must exactly match the variable name within the database).
 
 --An actual example of a one line in the file would be <var1: This is a note that would show up for var1>
+
+
+---Titles.csv and YAxis.csv---
+
+-See VariableNotes.csv the formating is the same
+
+-Titlees.csv will change the title of the plotly graph and YAxis.csv will change the Y axis of the plotly graph.   
