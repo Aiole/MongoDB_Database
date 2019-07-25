@@ -71,6 +71,22 @@ def all_vars():
 
 	
 	return all_vars
+
+def vars_notes():
+
+	all_vars = []
+	lines = open('VariableNotes.csv').read().splitlines()
+	for line in lines:
+		if ': ' in line:
+			name = line.split(': ')[0]
+			note = line.split(': ')[1]
+			print(name)
+			all_vars.append(name)
+			all_vars.append(note)
+	
+
+	
+	return all_vars
 	
 
 
@@ -415,4 +431,15 @@ def not_var(input_var,every_var):
 			return False
 
 	return True
+
+
+def check_notes(input_var):
+
+	lines = open('VariableNotes.csv').read().splitlines()
+	for line in lines:
+		if input_var in lines:
+			name = line.split(': ')[0]
+			return name 
+	
+
 
