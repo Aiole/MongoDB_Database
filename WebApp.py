@@ -1,6 +1,6 @@
 import os, flask
 from flask import Flask, render_template, request, redirect, url_for
-from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, flo_names, arr_names, all_vars, not_var, create_plot
+from Search import choose_search, between_search_f, upto_search_f, upto_time_f, between_time_f, query_type, float_parse, array_parse, csv_write, create_df, get_results, flo_names, arr_names, all_vars, not_var, create_plot, vars_notes
 import csv
 import datetime
 from datetime import timedelta
@@ -11,26 +11,71 @@ import logging
 app = flask.Flask(__name__)
 
 #Homepage Display
-@app.route("/")
+@app.route("/" , methods=['GET','POST'])
 def home():
-	return render_template('homepage.html')
 
-#Redirect for between and upto search
-@app.route('/', methods=['POST'])
-def search():
-	search_method = request.form['search_method']
-	newurl = str(choose_search(search_method))
-	if 'Between' in newurl:
-		return flask.redirect('/Between')
-	if 'UpToPresent' in newurl:
-		return flask.redirect('/UpToPresent')  
+	if request.method == 'POST':
+		if request.form['action'] == 'Find': 
+			search_var = request.form['search_var']
+			search_vars = search_var.split()
+			print(search_vars)
+			every_var = vars_notes()
+			a = 1
+			for string in search_vars:
+				a = 1
+				while a < len(every_var):
+					print(string) 
+					print(every_var[a])
+					if string not in every_var[a]:
+						every_var.pop(a)
+						every_var.pop(a-1)
+						a-=2			
+		
+					a+=2
+	
+			a = 1
+			print(every_var)
+			while a < len(every_var):
+				every_var.pop(a)
+				a+=1
+
+			print (len(every_var))
+			if len(every_var) == 0:
+				every_var.insert(0, 'Search Results')
+				every_list = [every_var]
+				return render_template('uptopage_updated.html', var=every_list, note='No results found make your search less specific and check spelling')		
+				
+
+			every_var.insert(0, 'Search Results')
+			every_list = [every_var]
+			print(every_list)
+			return render_template('uptopage.html', var=every_list)		
+		
+	return render_template('homepage.html')
+  
+		
+
+
+'''#Between Page Display
+@app.route('/Up2Present')
+def upto2():
+
+	search_vars = search_var.split()
+	every_var = all_vars_no_cata()
+	print(every_var)
+	for string in search_vars:
+		for x in every_var:
+			if string not in x:
+				every_var.remove(x)
+	
+	return render_template('uptopage.html', var=every_var)'''
+
 
 #Between Page Display
 @app.route('/Between')
 def between():
 		
 	every_var = all_vars()
-
 	return render_template('betweenpage.html', var=every_var)
 
 
@@ -134,6 +179,7 @@ def upto_graph(inputvar):
 
 	every_var = all_vars()
 	input_var = inputvar
+	print(every_var)	
 	
 	if not_var(input_var,every_var):
 		return render_template("uptopage_updated.html", var=every_var, note='This variable is not in the Database')
@@ -187,6 +233,24 @@ def upto_graph(inputvar):
 				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
 
 
+		if request.form['action'] == 'Last hour': 
+			starttime = datetime.datetime.utcnow()
+			starttime -= timedelta(hours = 1)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
+			
+			query = { "timestamp": { "$gte": start_time } }		
+	
+			data_time = upto_time_f(query)
+			flo_data, arr_data = upto_search_f(input_var,query)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data,yaxis,title)
+			try:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
+
+
 		if request.form['action'] == 'Last 24 hours': 
 			starttime = datetime.datetime.utcnow()
 			starttime -= timedelta(hours = 24)
@@ -198,7 +262,6 @@ def upto_graph(inputvar):
 			flo_data, arr_data = upto_search_f(input_var,query)
 			data = create_df(input_var,flo_data,arr_data,data_time)
 			graph = create_plot(data,yaxis,title)
-
 			try:
 				return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
@@ -280,9 +343,10 @@ def upto_graph(inputvar):
 
 
 
-'''@app.route('/landingpage')
-def landing_page():
-    id = request.args['id']'''
+
+
+
+
 	
     
 if __name__ == "__main__":
