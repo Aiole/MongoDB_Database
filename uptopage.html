@@ -20,7 +20,7 @@
 <form method="post" action="/UpToPresent">
 
 	<div class="dropdown">
-  	<button class="dropbtn">{{single_var[0]}}</button>
+  	<button class="dropbtn" disabled>{{single_var[0]}}</button>
 	<div class="dropdown-content">
 	{% for x in single_var[1:] %}
            
@@ -54,6 +54,8 @@
 
 	</div>
 
+	
+
 
 </div> 
 
@@ -67,7 +69,9 @@
 
 	<input type="submit" value="Graph" name="action">
 
-	<input type="submit" value="Download to csv file in dbDownloads" name="action">
+	<input type="submit" value="Download to csv file" name="action">
+
+	<input type="submit" value="Last hour" name="action">
 
 	<input type="submit" value="Last 24 hours" name="action">
 
