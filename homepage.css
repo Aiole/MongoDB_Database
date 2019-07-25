@@ -3,7 +3,8 @@ body {
 }
 
 header {
-	text-align: center;	
+	text-align: center;
+	margin-right: 120px;	
 }
 
 input, label {
@@ -23,6 +24,16 @@ div {
 	padding: 15px
 	
 
+}
+
+#buttons {
+	text-align: center;
+	
+}
+
+#input_search {
+	text-align: center;
+	
 }
 
 
