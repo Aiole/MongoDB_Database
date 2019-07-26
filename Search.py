@@ -80,7 +80,6 @@ def vars_notes():
 		if ': ' in line:
 			name = line.split(': ')[0]
 			note = line.split(': ')[1]
-			print(name)
 			all_vars.append(name)
 			all_vars.append(note)
 	
@@ -433,13 +432,50 @@ def not_var(input_var,every_var):
 	return True
 
 
-def check_notes(input_var):
-
-	lines = open('VariableNotes.csv').read().splitlines()
-	for line in lines:
-		if input_var in lines:
-			name = line.split(': ')[0]
-			return name 
 	
+
+def key_search(search_var):
+
+	search_vars = search_var.split()
+	every_var = vars_notes()
+	a = 1
+	for string in search_vars:
+		a = 1
+		while a < len(every_var):
+					
+			if string not in every_var[a]:
+				every_var.pop(a)
+				every_var.pop(a-1)
+				a-=2			
+		
+			a+=2
+	
+		a = 1
+		
+		while a < len(every_var):
+			every_var.pop(a)
+			a+=1
+
+		
+				
+
+		every_var.insert(0, 'Search Results')
+		every_list = [every_var]
+		return every_list
+		
+
+def save_list(search_var):
+
+	list_write = open('Search.csv', 'w')
+
+	with list_write:
+		writer = csv.writer(list_write)
+		writer.writerows([search_var])
+
+	return
+
+	
+
+
 
 
