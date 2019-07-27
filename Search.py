@@ -467,10 +467,10 @@ def key_search(search_var):
 def save_list(search_var):
 
 	list_write = open('Search.csv', 'w')
-
+	print(search_var)
 	with list_write:
 		writer = csv.writer(list_write)
-		writer.writerows([search_var])
+		writer.writerow([search_var])
 
 	return
 
