@@ -140,10 +140,10 @@ def keyword(inputvar):
 				graph = create_plot(data,yaxis,title)
 				try:
 					
-					return render_template("keypage.html", plot=graph, var=every_var, start=start_time, note=notes)
+					return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
 				except UnboundLocalError:
-					return render_template("keypage.html", plot=graph, var=every_var, start=start_time)
+					return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
 					
 
 
@@ -164,10 +164,10 @@ def keyword(inputvar):
 
 
 				try:
-					return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+					return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
 				except UnboundLocalError:
-					return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
+					return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
 
 
 			if request.form['action'] == 'Last 72 hours': 
@@ -183,10 +183,10 @@ def keyword(inputvar):
 				graph = create_plot(data,yaxis,title)
 
 				try:
-					return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+					return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
 
 				except UnboundLocalError:
-					return render_template("uptopage_updated.html", plot=graph, var=every_var, start=start_time)
+					return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
 
 
 
@@ -200,7 +200,7 @@ def keyword(inputvar):
 				csv_write(input_var,query)
 
 
-				return render_template('uptopage.html', var=every_var, note='File saved to /corr/home/dbDownloads')
+				return render_template('keypage_updated.html', var=every_var, note='File saved to /corr/home/dbDownloads')
 
 				
 
