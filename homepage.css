@@ -3,25 +3,21 @@ body {
 }
 
 header {
-	text-align: center;
-	margin-right: 120px;	
+	text-align: center;	
 }
 
 input, label {
 	display: inline-block;
 }
 
-div {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	width: 27%;
-}
+
 
 #choose {
-	margin-top: 10px
+	margin-top: 10px;
 	text-align: center;
-	padding: 15px
+	padding: 10px;
+	width: 100%;
+    	table-layout: fixed;
 	
 
 }
