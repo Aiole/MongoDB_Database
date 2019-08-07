@@ -498,6 +498,200 @@ def upto_graph(inputvar):
 
 
 
+@app.route('/MultiSearch', methods=['Get','POST'])
+def multi_graph():
+
+	every_var = all_vars()
+
+	'''lines = open('VariableNotes.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			notes = x.split(': ')[1]
+			break
+
+
+	lines = open('YAxis.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			yaxis = x.split(': ')[1]
+			break
+
+	lines = open('Titles.csv').read().splitlines()
+	for x in lines:
+		if input_var in x:
+			title = x.split(': ')[1]
+			break
+
+	
+	search_var = open('Search.csv').read()
+	every_var = key_search(search_var)
+	'''
+
+	if request.method == 'POST':
+
+		multi_graph = []
+		multi_var = request.form.getlist('multi')
+		print(multi_var) 
+
+
+		'''if request.form['action'] == 'Graph': 
+			start_time = request.form['start_time']
+
+
+
+			#Sets the greater than or equal to parameter with regards to start time	
+			query = { "timestamp": { "$gte": start_time } }	
+
+			data_time = upto_time_f(query)
+			flo_data, arr_data = upto_search_f(input_var,query)
+			try:
+				data = create_df(input_var,flo_data,arr_data,data_time)
+				graph = create_plot(data,yaxis,title)
+
+			except ValueError:
+				notes = 'You must enter a time before graphing'
+				return render_template("keypage_updated.html", var=every_var, start=start_time, note=notes)
+
+
+			try:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
+
+
+		if request.form['action'] == 'Last hour': 
+			starttime = datetime.datetime.utcnow()
+			starttime -= timedelta(hours = 1)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
+	
+			query = { "timestamp": { "$gte": start_time } }		
+
+			data_time = upto_time_f(query)
+			flo_data, arr_data = upto_search_f(input_var,query)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data,yaxis,title)
+			try:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
+
+
+		if request.form['action'] == 'Last 24 hours': 
+			starttime = datetime.datetime.utcnow()
+			starttime -= timedelta(hours = 24)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
+	
+			query = { "timestamp": { "$gte": start_time } }		
+
+			data_time = upto_time_f(query)
+			flo_data, arr_data = upto_search_f(input_var,query)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data,yaxis,title)
+			try:
+				
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
+				
+
+
+
+
+
+		if request.form['action'] == 'Last 48 hours': 
+			starttime = datetime.datetime.utcnow()
+			starttime -= timedelta(hours = 48)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
+	
+			query = { "timestamp": { "$gte": start_time } }		
+
+			data_time = upto_time_f(query)
+			flo_data, arr_data = upto_search_f(input_var,query)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data,yaxis,title)
+
+
+			try:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
+
+
+		if request.form['action'] == 'Last 72 hours': 
+			starttime = datetime.datetime.utcnow()
+			starttime -= timedelta(hours = 72)
+			start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
+	
+			query = { "timestamp": { "$gte": start_time } }		
+
+			data_time = upto_time_f(query)
+			flo_data, arr_data = upto_search_f(input_var,query)
+			data = create_df(input_var,flo_data,arr_data,data_time)
+			graph = create_plot(data,yaxis,title)
+
+			try:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time, note=notes)
+
+			except UnboundLocalError:
+				return render_template("keypage_updated.html", plot=graph, var=every_var, start=start_time)
+
+
+
+		if request.form['action'] == 'Download to csv file': 
+	
+			start_time = request.form['start_time']
+	
+			query = { "timestamp": { "$gte": start_time } }	
+	
+	
+			csv_write(input_var,query)
+
+
+			return render_template('keypage_updated.html', var=every_var, note='File saved to /corr/home/dbDownloads')
+
+			'''
+
+
+		if request.form['action'] == 'Last hour': 
+			for single_graph in multi_var:
+				i=0
+				starttime = datetime.datetime.utcnow()
+				starttime -= timedelta(hours = 1)
+				start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
+				query = { "timestamp": { "$gte": start_time } }		
+				data_time = upto_time_f(query)
+				flo_data, arr_data = upto_search_f(single_graph,query)
+				data = create_df(single_graph,flo_data,arr_data,data_time)
+				yaxis = None
+				title = None
+				notes = 'hey hey hey'
+				graph = create_plot(data,yaxis,title)
+				multi_graph.append(graph)
+			
+
+			print(multi_graph)
+			return render_template("multipage_updated.html", multi_graph=multi_graph, var=every_var, start=start_time, note=notes)
+
+	
+
+
+			
+		
+
+	
+			
+		print('here4')
+		notes = 'hey hey'
+		return render_template('multipage.html', var=every_var, note=notes)
+
+	
+
+	return render_template('multipage.html', var=every_var)
+
 
 
 
