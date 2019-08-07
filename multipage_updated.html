@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/multipage.css') }}">
+</head> 
+
+<body>
+
+
+
+<form>
+
+<a id="home" href="/"> Home </a>
+
+</form>
+
+
+<div id="big_block">
+<form method="post">
+
+	{% for single_var in var %}
+	
+	{% for x in single_var[1:] %}
+           
+		<input type="checkbox" name="{{x}}" value="multi" checked>{{x}}
+
+	
+        {% endfor %}
+	
+	{% endfor %}
+
+
+
+
+<form method="post" action="">
+
+	<section>
+
+	<div id="input_time"style="float:left;">
+	<input id="start_time" type="text" value="" name="start_time" pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31)) (0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}">
+	
+	</div>
+
+	<div id="time_label">
+
+	<label for="start_time">From this Date to the Present ('YYYY-MM-DD hh:mm:ss' format please)</label>	
+
+	</div>
+
+	
+
+
+</div> 
+
+
+	
+	<br style="clear:both;" />
+
+	</section>
+	
+	<section id="buttons"	>
+
+	<input type="submit" value="Graph" name="action">
+
+	<input type="submit" value="Download to csv file" name="action">
+
+	<input type="submit" value="Last hour" name="action">
+
+	<input type="submit" value="Last 24 hours" name="action">
+
+	<input type="submit" value="Last 48 hours" name="action">
+
+	<input type="submit" value="Last 72 hours" name="action">
+
+	</section>
+	
+
+
+</form>
+	
+	<h2> {{note}} </h2>
+
+
+</div>
+
+{% for single_graph in multi_graph %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+<div class="chart" id="bargraph">
+    <script>
+        var graphs = {{single_graph | safe}};
+        Plotly.plot('bargraph',graphs,{});
+    </script>
+</div>
+
+{% endfor %}
+
+</body>
+</html>
