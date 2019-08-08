@@ -1,5 +1,6 @@
 import pymongo
 import numpy as np
+from _plotly_future_ import v4_subplots
 import plotly
 import plotly.graph_objs as go
 import pandas as pd
@@ -8,6 +9,8 @@ import logging
 import datetime
 import time
 import json
+import random
+from plotly.subplots import make_subplots
 
 #Setup for connecting to MongoDB
 from pymongo import MongoClient
@@ -352,6 +355,56 @@ def create_df(input_var,flo_data,arr_data,data_time):
 	return data
 
 
+def create_multi_df(input_var,flo_data,arr_data,data_time,data,plot_num):
+	arr_vars = 0
+	flo_vars = 0
+	input_var = str(input_var)
+
+	arr_vars = arr_names()
+
+	flo_vars = flo_names()
+
+
+	#Puts the float data into a data frame to get it ready for graphing	
+	if input_var in flo_vars:
+					
+		x = np.asarray(data_time)
+		y = np.asarray(flo_data)
+		df = pd.DataFrame({'x': x, 'y': y})
+		data.append_trace(go.Scattergl(
+		x = df['x'],
+		y = df['y'],
+		mode = 'markers', #lines or markers
+	    	name = str(input_var),	
+		hoverlabel_font_size = 30			
+			),row=plot_num,col=1)
+
+	#Puts the array data into a data frame to get it ready for graphing
+	if input_var in arr_vars:
+		x = np.asarray(data_time)
+		y = np.asarray(arr_data)
+		array_index = 0 
+		while array_index < 8:
+			y = arr_data[:,array_index]
+			df = pd.DataFrame({'x': x, 'y': y})
+			data.append_trace(go.Scattergl(
+			x = df['x'],
+			y = df['y'],
+			mode = 'markers', #lines or markers
+		    	name = input_var + '[' + str(array_index) + ']',
+			hoverlabel_font_size = 30	
+
+			),row=plot_num,col=1)
+			array_index+=1
+
+
+
+
+
+	return data
+
+
+
 #Changes the layout of the plotly graph
 def create_plot(data,yaxis,title):
 
@@ -418,6 +471,9 @@ def create_plot(data,yaxis,title):
 	return graphJSON
 
 
+
+
+
 #This function is useless?
 def get_results(query,input_var):
 	return test_database.find(query,{str(input_var):1})
@@ -433,7 +489,7 @@ def not_var(input_var,every_var):
 
 
 	
-
+#Returns only the variables where every keyword appears in the notes
 def key_search(search_var):
 
 	search_vars = search_var.split()
@@ -442,8 +498,8 @@ def key_search(search_var):
 	for string in search_vars:
 		a = 1
 		while a < len(every_var):
-					
-			if string not in every_var[a]:
+			#Reduces the list to only the matching variables by elimination		
+			if string.lower() not in every_var[a].lower():
 				every_var.pop(a)
 				every_var.pop(a-1)
 				a-=2			
@@ -463,7 +519,7 @@ def key_search(search_var):
 		every_list = [every_var]
 		return every_list
 		
-
+#Saves the keyword(s) so a static list of the keyword variables can be made
 def save_list(search_var):
 
 	list_write = open('Search.csv', 'w')
