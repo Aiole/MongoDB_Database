@@ -21,9 +21,11 @@
 
 	{% for single_var in var %}	
 	{% for x in single_var[1:] %}
-           
-		<input type="checkbox" name="multi" value="{{x}}">{{x}}
 
+	<label class="container">{{x}}
+  		<input type="checkbox" name="multi" value="{{x}}">
+  		<span class="checkmark"></span>
+	</label>
 	
         {% endfor %}
 	{% endfor %}
