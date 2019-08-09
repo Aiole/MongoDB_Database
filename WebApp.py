@@ -10,6 +10,7 @@ from _plotly_future_ import v4_subplots
 import plotly
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
+import ast
 
 app = flask.Flask(__name__)
 
@@ -20,7 +21,7 @@ def home():
 	return render_template('homepage.html')
   
 
-
+#The Keyword page that saves the keywords you enter into it
 @app.route('/KeywordSearch', methods=['GET','POST'])
 def key():
 
@@ -28,8 +29,8 @@ def key():
 
 	if request.method == 'POST':
 
+		#After submiting the keywords the search results are stored 
 		if request.form['action'] == 'Submit Query': 
-
 			search_var = request.form['search_var']
 			every_list = key_search(search_var)
 			save_list(search_var)
@@ -45,14 +46,14 @@ def key():
 
 
 	
-
+#The Keyword page that you choose a search result and graph from
 @app.route('/KeywordSearch/<inputvar>', methods=['GET','POST'])
 def keyword(inputvar):
 
 
 	input_var = inputvar
 
-
+	#Initializing relevent data for chosen variable
 	lines = open('VariableNotes.csv').read().splitlines()
 	for x in lines:
 		if input_var in x:
@@ -73,6 +74,7 @@ def keyword(inputvar):
 			break
 
 
+	#Reads in the stored search results
 	search_var = open('Search.csv').read()
 	every_var = key_search(search_var)
 
@@ -85,7 +87,7 @@ def keyword(inputvar):
 			if request.form['action'] == 'Submit Query': 
 				return render_template('keypage_updated.html', var=every_var, note=notes)
 
-
+			#Function for graphing a manualy entered time interval
 			if request.form['action'] == 'Graph': 
 				start_time = request.form['start_time']
 
@@ -515,11 +517,17 @@ def multi_graph():
 		multi_graph = []
 		multi_titles = []
 		multi_yaxis = []
-		multi_var = request.form.getlist('multi')
-		print(multi_var) 
 
+
+		with open('Search.csv', newline='') as f:
+	  		reader = csv.reader(f)
+	  		multi_var = next(reader)		
+
+		multi_var = multi_var[0]
+		multi_var = ast.literal_eval(multi_var)
 
 	
+
 		for single_graph in multi_var:
 
 			for x in title_lines:
@@ -538,59 +546,12 @@ def multi_graph():
 			multi_yaxis.append(yaxis)
 
 
-		if request.form['action'] == 'Graph': 
-
-			start_time = request.form['start_time']
-
-
-
-			plot_num = 1
-			data = make_subplots(rows=len(multi_var), cols=1, subplot_titles=(multi_titles))
-			hght = (550 * len(multi_var)) - 200
-
-			for single_graph in multi_var:
-				data.update_yaxes(title_text=multi_yaxis[plot_num-1], row=plot_num, col=1)
-				data.layout.update(height=hght, width=1500, title_text="Multi Snapshot")
-				query = { "timestamp": { "$gte": start_time } }		
-				data_time = upto_time_f(query)
-				flo_data, arr_data = upto_search_f(single_graph,query)
-				data = create_multi_df(single_graph,flo_data,arr_data,data_time,data,plot_num)
-				graph = create_plot(data,yaxis,title)
-				plot_num+=1
-				
-
-
-			return render_template("multipage_updated.html", multi_graph=graph, var=every_var, start=start_time)
-
-
-
-		
-		if request.form['action'] == 'Last hour':
-
-			plot_num = 1
-			data = make_subplots(rows=len(multi_var), cols=1, subplot_titles=(multi_titles))
-			hght = (550 * len(multi_var)) - 200
-
-			for single_graph in multi_var:
-				data.update_yaxes(title_text=multi_yaxis[plot_num-1], row=plot_num, col=1)
-				data.layout.update(height=hght, width=1500, title_text="Multi Snapshot")
-				starttime = datetime.datetime.utcnow()
-				starttime -= timedelta(hours = 1)
-				start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
-				query = { "timestamp": { "$gte": start_time } }		
-				data_time = upto_time_f(query)
-				flo_data, arr_data = upto_search_f(single_graph,query)
-				data = create_multi_df(single_graph,flo_data,arr_data,data_time,data,plot_num)
-				graph = create_plot(data,yaxis,title)
-				plot_num+=1
-				
-
-
-			return render_template("multipage_updated.html", multi_graph=graph, var=every_var, start=start_time)
-
 
 
 		if request.form['action'] == 'Last 24 hours': 
+	
+			multi_var = request.form.getlist('multi')
+			save_list(multi_var)
 
 			plot_num = 1
 			data = make_subplots(rows=len(multi_var), cols=1, subplot_titles=(multi_titles))
@@ -616,69 +577,38 @@ def multi_graph():
 
 
 
-
-
-		if request.form['action'] == 'Last 48 hours': 
-
-			plot_num = 1
-			data = make_subplots(rows=len(multi_var), cols=1, subplot_titles=(multi_titles))
-			hght = (550 * len(multi_var)) - 200
-
-			for single_graph in multi_var:
-				data.update_yaxes(title_text=multi_yaxis[plot_num-1], row=plot_num, col=1)
-				data.layout.update(height=hght, width=1500, title_text="Multi Snapshot")
-				starttime = datetime.datetime.utcnow()
-				starttime -= timedelta(hours = 48)
-				start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
-				query = { "timestamp": { "$gte": start_time } }		
-				data_time = upto_time_f(query)
-				flo_data, arr_data = upto_search_f(single_graph,query)
-				data = create_multi_df(single_graph,flo_data,arr_data,data_time,data,plot_num)
-				graph = create_plot(data,yaxis,title)
-				plot_num+=1
-				
-
-
-			return render_template("multipage_updated.html", multi_graph=graph, var=every_var, start=start_time)
-
-
-		if request.form['action'] == 'Last 72 hours': 
-			
-			plot_num = 1
-			data = make_subplots(rows=len(multi_var), cols=1, subplot_titles=(multi_titles))
-			hght = (550 * len(multi_var)) - 200
-
-			for single_graph in multi_var:
-				data.update_yaxes(title_text=multi_yaxis[plot_num-1], row=plot_num, col=1)
-				data.layout.update(height=hght, width=1500, title_text="Multi Snapshot")
-				starttime = datetime.datetime.utcnow()
-				starttime -= timedelta(hours = 72)
-				start_time = starttime.strftime("%Y-%m-%d %H:%M:%S")
-				query = { "timestamp": { "$gte": start_time } }		
-				data_time = upto_time_f(query)
-				flo_data, arr_data = upto_search_f(single_graph,query)
-				data = create_multi_df(single_graph,flo_data,arr_data,data_time,data,plot_num)
-				graph = create_plot(data,yaxis,title)
-				plot_num+=1
-				
-
-
-			return render_template("multipage_updated.html", multi_graph=graph, var=every_var, start=start_time)
-
-
-
-
 		if request.form['action'] == 'Download to csv file': 
 	
 			start_time = request.form['start_time']
 	
 			query = { "timestamp": { "$gte": start_time } }	
-	
+			
+			print(type(multi_var), 'here')
+			
 			for input_var in multi_var:
 				csv_write(input_var,query)
 
 
 			return render_template('multipage_updated.html', var=every_var, note='File saved to /corr/home/dbDownloads')
+
+
+		if request.form['action'] == 'Show notes': 
+				
+			all_notes = ''
+	
+			for input_var in multi_var:
+				lines = open('VariableNotes.csv').read().splitlines()
+				for x in lines:
+					if input_var in x:
+						notes = x
+					
+
+				all_notes += x + '. '
+			
+
+
+
+			return render_template('multipage_updated.html', var=every_var, note=all_notes)
 
 	
 			
