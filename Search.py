@@ -63,6 +63,7 @@ def all_vars():
 	lines = open('Variables.csv').read().splitlines()
 	for line in lines:
 		if ': ' in line:
+			#Makes multiple lists with name of the dropdown menu at index 0 followed by the variables after
 			name = line.split(': ')[0]
 			name = name.split(', ')[1]
 			var = line.split(': ')[1]
@@ -75,6 +76,7 @@ def all_vars():
 	
 	return all_vars
 
+#Creates an alternating list of a's name, a's notes, b's name, b's notes, etc. for every variable
 def vars_notes():
 
 	all_vars = []
@@ -274,14 +276,14 @@ def array_parse(input_var, query):
 def csv_write(input_var,query):
 
 	#Parses the data by creating new lines so it isnt one long mess
+	#print(input_var)
 	timenow = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.utcnow())
-	dir_name = '/home/corr/dbDownloads/' + timenow + '.csv'
+	dir_name = '/home/corr/dbDownloads/' + input_var + ' ' + timenow + '.csv'
 	data_log = open(dir_name, 'w')
 	data_csv = []
 	results = get_results(query,input_var)
 	data = '\n'.join(map(str, results))
 	count = results.count()
-	print(data)
 	data_c = data.split("'), '")
 
 	#Removes unnecessary data like the id
@@ -473,8 +475,7 @@ def create_plot(data,yaxis,title):
 
 
 
-
-#This function is useless?
+#Simple database query
 def get_results(query,input_var):
 	return test_database.find(query,{str(input_var):1})
 
