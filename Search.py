@@ -356,7 +356,7 @@ def create_df(input_var,flo_data,arr_data,data_time):
 
 	return data
 
-
+#An iterable version of create_df
 def create_multi_df(input_var,flo_data,arr_data,data_time,data,plot_num):
 	arr_vars = 0
 	flo_vars = 0
@@ -460,8 +460,6 @@ def create_plot(data,yaxis,title):
 	)
 
 
-	
-
 
 	fig = go.Figure(data=data, layout=layout)
 
@@ -524,7 +522,7 @@ def key_search(search_var):
 def save_list(search_var):
 
 	list_write = open('Search.csv', 'w')
-	print(search_var)
+	print('here')
 	with list_write:
 		writer = csv.writer(list_write)
 		writer.writerow([search_var])
