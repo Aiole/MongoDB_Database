@@ -3,9 +3,6 @@
 
 
 
-
-
-
 ---Variables.csv---
 
 -The Variables.csv file should be located in the same directory as the rest of the python scripts (Search.py,WebApp.py,etc...)
@@ -21,7 +18,6 @@
 
 
 
-
 ---VariableNotes.csv---
 
 -Like the Variables.csv file the VariableNotes.csv file should also be located in the same directory as the rest of the python scripts (Search.py,WebApp.py,etc...)
@@ -33,8 +29,61 @@
 --An actual example of a one line in the file would be <var1: This is a note that would show up for var1>
 
 
+
 ---Titles.csv and YAxis.csv---
 
--See VariableNotes.csv the formating is the same
+-See VariableNotes.csv the formating is the same.
 
--Titlees.csv will change the title of the plotly graph and YAxis.csv will change the Y axis of the plotly graph.   
+-Titles.csv will change the title of the plotly graph and YAxis.csv will change the Y axis of the plotly graph.
+
+
+
+---Search.csv---
+
+--Do NOT touch Search.csv if you do put anything in there it will be overwritten. Search.csv is a necessary file and should not be deleted.
+
+
+
+---Search From Date---
+
+-First select one of the variables from the green drop down menus this will show its notes feel free to click on the other variables if you want to see their notes.
+
+-Next either enter a time into the textbox that matches the time format and press graph or click one of the 4(last hour, last 24 hours, last 48 hours, last 72 hours) buttons. This will dislay an interactive graph which has hover over features you can also scroll over the buttons at the top right to see other features of the graph.
+
+-After entering a time you may press Download to csv file which will download a csv of the raw data     
+
+
+
+---Search Between Dates---
+
+-First select one of the variables from the green drop down menus this will show its notes feel free to click on the other variables if you want to see their notes.
+
+-Next either enter a starting time into the textbox on the left and an ending time into the textbox on the right this will graph the data gathered for the selected variable between these times and press graph. This will dislay an interactive graph which has hover over features you can also scroll over the buttons at the top right to see other features of the graph.
+
+-After entering a time you may press Download to csv file which will download a csv of the raw data     
+
+
+
+---Keyword Search---
+
+-In the textbox that shows up initally type in keywords(caps incensitive) with a space in between each word and press enter or submit query
+
+-Now you will see a green dropdown menu called search results if you do not see any variables dropping down after hovering over search results then none were found. Try to use less keywords and shorten the words your using and be less specific.
+
+-When you do see results you can click each one and read the exact notes until you find the one you were looking for.
+
+-Next either enter a time into the textbox that matches the time format and press graph or click one of the 4(last hour, last 24 hours, last 48 hours, last 72 hours) buttons. This will dislay an interactive graph which has hover over features you can also scroll over the buttons at the top right to see other features of the graph.
+
+-After entering a time you may press Download to csv file which will download a csv of the raw data     
+
+
+
+---Complex Search Query---
+
+-You will initally see many checkboxes with variable names and 2 buttons first select the variables you would like to graph by checking their respective checkboxes.
+
+-Next click the last 24 hours button and you should see subplots of all the variables select(you will have to scroll down to see all of them) if web app crashes refresh if errors continue you might have to select fewer variables.
+
+-Now you will be able to save to csv file(will make multiple for each variable selected) and you can show notes which will diplay all the notes for the variables selected press back to get back to the graphs. You can also select new variables and press last 24 hours again to get new subplots similarly to the other searches.
+
+
